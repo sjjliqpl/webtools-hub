@@ -4,10 +4,24 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WebTools - 50个在线工具</title>
+    <title>WebTools Hub - 55个在线工具</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script>
+      // Restore path from GitHub Pages 404 redirect
+      (function() {
+        var p = window.location.search.slice(1).split('&').reduce(function(a, s) {
+          var e = s.split('='); a[e[0]] = e.slice(1).join('='); return a;
+        }, {});
+        if (p.p !== undefined) {
+          var path = '/' + p.p.replace(/~and~/g, '&');
+          var search = p.q ? '?' + p.q.replace(/~and~/g, '&') : '';
+          var hash = window.location.hash;
+          window.history.replaceState(null, null, path + search + hash);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

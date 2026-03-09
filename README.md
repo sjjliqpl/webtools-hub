@@ -1,73 +1,129 @@
-# React + TypeScript + Vite
+# ⚡ WebTools Hub
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **55 个在线工具集合** — 无需安装，打开即用
 
-Currently, two official plugins are available:
+🌐 **在线访问：[https://sjjliqpl.github.io/webtools-hub/](https://sjjliqpl.github.io/webtools-hub/)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## ✨ 特性
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- 🔍 **搜索优先** — 首页顶部搜索栏，支持模糊匹配，秒找工具
+- 🗂️ **分类导航** — 5 大类别，标签快速筛选
+- 🃏 **卡片布局** — 每个工具含图标、名称和描述
+- ⭐ **收藏夹** — 自定义常用工具，数据本地持久化
+- 🌙 **暗色/亮色主题** — 一键切换，记忆偏好
+- 🌐 **中/英文切换** — 默认中文，支持英文界面
+- 📱 **响应式布局** — 手机/平板/桌面全适配
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠️ 工具列表（55 个）
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 📝 文本处理类 (10)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+| 工具 | 功能描述 |
+|------|---------|
+| 字数统计器 | 实时统计字符数（含/不含空格）、单词数、行数 |
+| 大小写转换 | 全大写、全小写、首字母大写、句子首字母大写 |
+| JSON 格式化 | JSON 格式化与校验，支持 2/4 空格缩进，一键复制 |
+| Base64 编解码 | Base64 文本双向实时转换，UTF-8 兼容 |
+| URL 编解码 | encodeURIComponent / decodeURIComponent 双向处理 |
+| Markdown 预览 | 左侧输入，右侧实时渲染 HTML（基于 marked.js）|
+| 文本去重 | 删除重复行，显示删除数量 |
+| 文本排序 | 按字母/行长度/数字大小排序 |
+| Lorem Ipsum 生成 | 生成段落数/句子数/单词数占位文本 |
+| 代码高亮预览 | Prism.js 语法高亮，支持 JS/HTML/CSS |
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 🔢 数学与转换类 (10)
+
+| 工具 | 功能描述 |
+|------|---------|
+| BMI 计算器 | 输入身高/体重，输出 BMI 值及健康状态，带进度条 |
+| 小费计算器 | 账单金额 + 小费比例 + 人数 → 人均金额 |
+| 长度单位换算 | 米/千米/厘米/毫米/英寸/英尺联动转换 |
+| 重量单位换算 | 千克/克/磅/盎司互转 |
+| 百分比计算器 | A 是 B 的百分之几？A 增加 B% 是多少？|
+| 进制转换器 | 2/8/10/16 进制实时互转 |
+| 房贷计算器 | 贷款额 + 年利率 + 期限 → 月供（等额本息）|
+| 温度转换 | 摄氏度 ↔ 华氏度双向实时换算 |
+| 随机数生成器 | 自定义范围、数量、是否允许重复 |
+| 汇率模拟器 | USD/EUR/CNY 等常用货币双向换算 |
+
+### 🎨 UI 与设计类 (15)
+
+| 工具 | 功能描述 |
+|------|---------|
+| 深色模式切换 | 太阳/月亮图标切换深浅色 Demo |
+| 颜色代码转换 | HEX/RGB/HSL 三格式互转，背景实时变色 |
+| 调色板生成器 | 按空格键生成 5 个协调颜色，点击复制 HEX |
+| CSS 阴影生成器 | 滑动条调整偏移/模糊/扩散，生成 box-shadow |
+| CSS 圆角生成器 | 四角独立调节，生成 border-radius 代码 |
+| 图片转 Base64 | 上传图片 → Base64 字符串，一键复制 |
+| 简易画板 | Canvas 画板，可调颜色/粗细，支持保存图片 |
+| 模态框预览 | 信息确认/表单/全屏 3 种模态框 + 动画 |
+| 折叠面板 | FAQ 风格 Accordion，平滑展开动画 |
+| 滚动进度条 | 页面顶部 4px 彩色进度条，实时跟随滚动 |
+| 渐变生成器 | 线性/径向渐变可视化编辑，生成 CSS 代码 |
+| Flexbox 游乐场 | 交互式 Flexbox 属性测试工具 |
+| Grid 布局生成器 | CSS Grid 可视化构建器 |
+| 贝塞尔曲线编辑器 | SVG 三次贝塞尔曲线交互编辑 |
+| CSS 单位换算 | px/rem/em/vw/vh 互转 |
+
+### ⏰ 时间与效率类 (10)
+
+| 工具 | 功能描述 |
+|------|---------|
+| 数字时钟 | 年月日/星期/时分秒，支持 12/24 小时制 |
+| 倒计时定时器 | 设定时分秒，结束后提示音 + 弹窗 |
+| 番茄钟 | 25min 工作 + 5min 休息，圆形进度条动画 |
+| 秒表 | 开始/暂停/复位/计次，计次列表可滚动 |
+| 待办列表 | 添加/完成/删除/编辑，数据存 localStorage |
+| 简易笔记 | 自动保存本地，支持字数统计和 Markdown 预览 |
+| 日期差计算器 | 计算两日期相差天数/周数/月数 |
+| 生命进度条 | 输入生日，可视化人生已走过的百分比 |
+| 虚拟键盘 | 标准键盘布局，点击按键输入到文本框 |
+| 白噪音播放器 | 雨声/森林/火炉等 5 种音效，Web Audio API |
+
+### 🎮 游戏与安全类 (10)
+
+| 工具 | 功能描述 |
+|------|---------|
+| 随机密码生成 | 自定义长度/字符集，显示密码强度 |
+| 打字测试 | 实时比对输入，显示 WPM 和准确率 |
+| 猜数字游戏 | 1-100 随机数，提示高了/低了，记录次数 |
+| 抛硬币/掷骰子 | 3D CSS 动画效果 |
+| 井字棋 | 双人对战，自动判胜负，高亮赢棋路径 |
+| 记忆翻牌 | 4×4 图标匹配游戏，翻牌动画 |
+| 简易计算器 | 标准布局，支持加减乘除/百分比/正负号 |
+| 二维码生成 | 输入文字/网址实时生成 QR Code，支持下载 PNG |
+| 反应时测试 | 随机绿屏测反应速度，统计平均毫秒数 |
+| 敏感词过滤 | 关键词替换为 ***，统计替换次数 |
+
+---
+
+## 🚀 本地开发
+
+```bash
+git clone https://github.com/sjjliqpl/webtools-hub.git
+cd webtools-hub
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+访问 `http://localhost:5173`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🏗️ 技术栈
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- **React 19** + **TypeScript**
+- **Vite** — 构建工具
+- **Tailwind CSS v4** — 样式
+- **React Router v6** — 路由
+- **marked.js** — Markdown 渲染
+- **Prism.js** — 代码高亮
+- **qrcode** — 二维码生成
+
+## 📦 部署
+
+推送到 `main` 分支自动触发 GitHub Actions，构建并部署到 GitHub Pages。
+
