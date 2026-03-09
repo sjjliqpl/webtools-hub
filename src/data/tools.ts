@@ -1,4 +1,3 @@
-import type { ComponentType } from 'react'
 
 export interface Tool {
   id: string
