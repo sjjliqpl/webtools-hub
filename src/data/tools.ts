@@ -20,6 +20,7 @@ export const categories: Category[] = [
   { id: 'ui', name: 'UI 设计', icon: '🎨', color: '#ec4899' },
   { id: 'time', name: '时间效率', icon: '⏰', color: '#10b981' },
   { id: 'games', name: '游戏安全', icon: '🎮', color: '#ef4444' },
+  { id: 'crypto', name: '密码安全', icon: '🔒', color: '#8b5cf6' },
 ]
 
 export const tools: Tool[] = [
@@ -75,6 +76,18 @@ export const tools: Tool[] = [
   { id: 'life-progress', name: '生命进度条', description: '人生百分比可视化', category: 'time', icon: '💚' },
   { id: 'virtual-keyboard', name: '虚拟键盘', description: '标准键盘布局输入', category: 'time', icon: '⌨️' },
   { id: 'white-noise', name: '白噪音播放器', description: '5 种环境声音播放', category: 'time', icon: '🎵' },
+
+  // 密码安全
+  { id: 'password-strength', name: '密码强度检测', description: '分析密码强度与安全建议', category: 'crypto', icon: '🛡️' },
+  { id: 'hash-generator', name: '哈希值计算', description: 'SHA-1/256/384/512 哈希计算', category: 'crypto', icon: '#️⃣' },
+  { id: 'caesar-cipher', name: '凯撒密码', description: '字母位移加密解密工具', category: 'crypto', icon: '🔤' },
+  { id: 'rot13', name: 'ROT13 编解码', description: 'ROT13 文本双向转换', category: 'crypto', icon: '🔄' },
+  { id: 'jwt-decoder', name: 'JWT 令牌解析', description: '解析 JWT 头部与载荷内容', category: 'crypto', icon: '🎫' },
+  { id: 'uuid-generator', name: 'UUID 生成器', description: '批量生成随机 UUID v4', category: 'crypto', icon: '🆔' },
+  { id: 'morse-code', name: '摩尔斯电码', description: '文本与摩尔斯电码互转', category: 'crypto', icon: '📡' },
+  { id: 'text-binary', name: '文本转二进制', description: '文本与 8 位二进制编码互转', category: 'crypto', icon: '🔢' },
+  { id: 'random-token', name: '随机令牌生成', description: '生成随机 API 密钥令牌', category: 'crypto', icon: '🎲' },
+  { id: 'xor-cipher', name: 'XOR 异或加密', description: '密钥 XOR 位运算加密演示', category: 'crypto', icon: '⊕' },
 
   // 游戏与安全
   { id: 'password-generator', name: '随机密码生成', description: '自定义密码生成器', category: 'games', icon: '🔑' },
