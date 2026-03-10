@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { tools, categories } from '../data/tools'
 import { useApp } from '../context/AppContext'
@@ -47,6 +47,63 @@ export default function Home() {
 
   // Group by category when showing all (no search, no category filter)
   const showGrouped = !search && !activeCategory
+
+  // Scroll to hash on initial load when in grouped view
+  const didScrollToHash = useRef(false)
+  useEffect(() => {
+    if (!showGrouped || didScrollToHash.current) return
+    const hash = window.location.hash
+    if (hash) {
+      didScrollToHash.current = true
+      const el = document.getElementById(hash.slice(1))
+      if (el) {
+        requestAnimationFrame(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+      }
+    }
+  }, [showGrouped])
+
+  // Track scroll position and update URL hash with current category
+  useEffect(() => {
+    if (!showGrouped) {
+      // Clear hash when not in grouped view
+      if (window.location.hash) {
+        history.replaceState(null, '', window.location.pathname + window.location.search)
+      }
+      return
+    }
+
+    // Offset from top of viewport at which a section is considered "active"
+    const CATEGORY_VISIBILITY_OFFSET = 120
+    let lastUpdate = 0
+
+    const handleScroll = () => {
+      const now = Date.now()
+      if (now - lastUpdate < 100) return
+      lastUpdate = now
+
+      const sectionIds = categories.map(c => `category-${c.id}`)
+      let currentId = ''
+      for (const id of sectionIds) {
+        const el = document.getElementById(id)
+        if (el) {
+          const rect = el.getBoundingClientRect()
+          if (rect.top <= CATEGORY_VISIBILITY_OFFSET) {
+            currentId = id
+          }
+        }
+      }
+      const newHash = currentId ? `#${currentId}` : ''
+      const currentHash = window.location.hash
+      if (newHash !== currentHash) {
+        history.replaceState(null, '', window.location.pathname + window.location.search + newHash)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [showGrouped])
+
   const groupedByCategory = showGrouped
     ? categories.map(cat => ({
         cat,
@@ -220,7 +277,7 @@ export default function Home() {
         {showGrouped && (
           <div className="space-y-12">
             {groupedByCategory.map(({ cat, tools: catTools }) => (
-              <section key={cat.id}>
+              <section key={cat.id} id={`category-${cat.id}`}>
                 {/* Category Section Header */}
                 <div className="flex items-center gap-3 mb-5">
                   <div
