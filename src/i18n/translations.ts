@@ -58,6 +58,7 @@ export const categoryNames: Record<string, Record<Lang, string>> = {
   time: { zh: '时间效率', en: 'Time & Productivity' },
   games: { zh: '游戏安全', en: 'Games & Security' },
   crypto: { zh: '密码安全', en: 'Crypto & Security' },
+  iot: { zh: '物联网工具', en: 'IoT Tools' },
 }
 
 export const toolTranslations: Record<string, { name: string; description: string }> = {
@@ -137,4 +138,14 @@ export const toolTranslations: Record<string, { name: string; description: strin
   'text-binary': { name: 'Text ↔ Binary', description: 'Convert text to/from 8-bit binary encoding' },
   'random-token': { name: 'Token Generator', description: 'Generate random API keys and security tokens' },
   'xor-cipher': { name: 'XOR Cipher', description: 'Simple XOR key encryption demonstration' },
+
+  // IoT Tools
+  'mqtt-topic': { name: 'MQTT Topic Validator', description: 'Validate MQTT topic format and parse topic levels' },
+  'crc-calculator': { name: 'CRC Calculator', description: 'Calculate CRC-8, CRC-16/Modbus, CRC-16/CCITT, CRC-32' },
+  'hex-converter': { name: 'Byte/Hex Converter', description: 'Convert between hex, decimal, binary and ASCII' },
+  'subnet-calculator': { name: 'IP Subnet Calculator', description: 'Calculate subnet mask, host count from CIDR notation' },
+  'unix-timestamp': { name: 'Unix Timestamp', description: 'Convert between Unix timestamps and human-readable dates' },
+  'bitwise-calc': { name: 'Bitwise Calculator', description: 'AND, OR, XOR, NOT, and bit shift operations' },
+  'iot-power': { name: 'IoT Power Calculator', description: 'Estimate IoT device battery life from current profile' },
+  'baud-rate': { name: 'Baud Rate Calculator', description: 'Calculate UART/RS-485 serial transmission time' },
 }

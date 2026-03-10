@@ -70,6 +70,14 @@ const toolComponents: Record<string, React.LazyExoticComponent<React.ComponentTy
   'text-binary': lazy(() => import('../tools/crypto/TextBinary')),
   'random-token': lazy(() => import('../tools/crypto/RandomToken')),
   'xor-cipher': lazy(() => import('../tools/crypto/XorCipher')),
+  'mqtt-topic': lazy(() => import('../tools/iot/MqttTopic')),
+  'crc-calculator': lazy(() => import('../tools/iot/CrcCalculator')),
+  'hex-converter': lazy(() => import('../tools/iot/HexConverter')),
+  'subnet-calculator': lazy(() => import('../tools/iot/SubnetCalculator')),
+  'unix-timestamp': lazy(() => import('../tools/iot/UnixTimestamp')),
+  'bitwise-calc': lazy(() => import('../tools/iot/BitwiseCalc')),
+  'iot-power': lazy(() => import('../tools/iot/IotPower')),
+  'baud-rate': lazy(() => import('../tools/iot/BaudRate')),
 }
 
 export default function ToolPage() {

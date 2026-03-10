@@ -21,6 +21,7 @@ export const categories: Category[] = [
   { id: 'time', name: '时间效率', icon: '⏰', color: '#10b981' },
   { id: 'games', name: '游戏安全', icon: '🎮', color: '#ef4444' },
   { id: 'crypto', name: '密码安全', icon: '🔒', color: '#8b5cf6' },
+  { id: 'iot', name: '物联网工具', icon: '📡', color: '#0ea5e9' },
 ]
 
 export const tools: Tool[] = [
@@ -88,6 +89,16 @@ export const tools: Tool[] = [
   { id: 'text-binary', name: '文本转二进制', description: '文本与 8 位二进制编码互转', category: 'crypto', icon: '🔢' },
   { id: 'random-token', name: '随机令牌生成', description: '生成随机 API 密钥令牌', category: 'crypto', icon: '🎲' },
   { id: 'xor-cipher', name: 'XOR 异或加密', description: '密钥 XOR 位运算加密演示', category: 'crypto', icon: '⊕' },
+
+  // 物联网工具
+  { id: 'mqtt-topic', name: 'MQTT 主题验证器', description: 'MQTT 主题格式验证与层级解析', category: 'iot', icon: '📡' },
+  { id: 'crc-calculator', name: 'CRC 校验计算器', description: 'CRC-8/16/CCITT/32 校验值计算', category: 'iot', icon: '🔍' },
+  { id: 'hex-converter', name: '字节/进制转换器', description: '十六进制、十进制、二进制、ASCII 互转', category: 'iot', icon: '🔢' },
+  { id: 'subnet-calculator', name: 'IP 子网计算器', description: 'CIDR 子网掩码、主机数量计算', category: 'iot', icon: '🌐' },
+  { id: 'unix-timestamp', name: 'Unix 时间戳转换', description: '时间戳与日期时间双向转换', category: 'iot', icon: '🕐' },
+  { id: 'bitwise-calc', name: '位运算计算器', description: 'AND/OR/XOR/NOT/移位运算', category: 'iot', icon: '⚙️' },
+  { id: 'iot-power', name: '设备功耗计算器', description: '估算 IoT 设备电池续航时间', category: 'iot', icon: '🔋' },
+  { id: 'baud-rate', name: '波特率计算器', description: 'UART/RS-485 串口数据传输计算', category: 'iot', icon: '📶' },
 
   // 游戏与安全
   { id: 'password-generator', name: '随机密码生成', description: '自定义密码生成器', category: 'games', icon: '🔑' },
