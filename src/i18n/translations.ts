@@ -57,6 +57,7 @@ export const categoryNames: Record<string, Record<Lang, string>> = {
   ui: { zh: 'UI 设计', en: 'UI & Design' },
   time: { zh: '时间效率', en: 'Time & Productivity' },
   games: { zh: '游戏安全', en: 'Games & Security' },
+  crypto: { zh: '密码安全', en: 'Crypto & Security' },
 }
 
 export const toolTranslations: Record<string, { name: string; description: string }> = {
@@ -124,4 +125,16 @@ export const toolTranslations: Record<string, { name: string; description: strin
   'qrcode': { name: 'QR Code Generator', description: 'Generate QR codes from text/URL' },
   'reaction-test': { name: 'Reaction Test', description: 'Measure your reaction time in milliseconds' },
   'word-filter': { name: 'Word Filter', description: 'Replace sensitive words with asterisks' },
+
+  // Crypto & Security
+  'password-strength': { name: 'Password Strength', description: 'Analyze password strength with detailed criteria' },
+  'hash-generator': { name: 'Hash Generator', description: 'Calculate SHA-1/256/384/512 hash values' },
+  'caesar-cipher': { name: 'Caesar Cipher', description: 'Encrypt/decrypt text with letter shift' },
+  'rot13': { name: 'ROT13 Codec', description: 'ROT13 bidirectional text encoder/decoder' },
+  'jwt-decoder': { name: 'JWT Decoder', description: 'Parse JWT token header and payload' },
+  'uuid-generator': { name: 'UUID Generator', description: 'Generate random UUID v4 values' },
+  'morse-code': { name: 'Morse Code', description: 'Convert between text and Morse code' },
+  'text-binary': { name: 'Text ↔ Binary', description: 'Convert text to/from 8-bit binary encoding' },
+  'random-token': { name: 'Token Generator', description: 'Generate random API keys and security tokens' },
+  'xor-cipher': { name: 'XOR Cipher', description: 'Simple XOR key encryption demonstration' },
 }

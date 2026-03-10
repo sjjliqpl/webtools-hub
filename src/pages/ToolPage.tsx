@@ -60,6 +60,16 @@ const toolComponents: Record<string, React.LazyExoticComponent<React.ComponentTy
   'qrcode': lazy(() => import('../tools/games/QRCode')),
   'reaction-test': lazy(() => import('../tools/games/ReactionTest')),
   'word-filter': lazy(() => import('../tools/games/WordFilter')),
+  'password-strength': lazy(() => import('../tools/crypto/PasswordStrength')),
+  'hash-generator': lazy(() => import('../tools/crypto/HashGenerator')),
+  'caesar-cipher': lazy(() => import('../tools/crypto/CaesarCipher')),
+  'rot13': lazy(() => import('../tools/crypto/Rot13')),
+  'jwt-decoder': lazy(() => import('../tools/crypto/JwtDecoder')),
+  'uuid-generator': lazy(() => import('../tools/crypto/UuidGenerator')),
+  'morse-code': lazy(() => import('../tools/crypto/MorseCode')),
+  'text-binary': lazy(() => import('../tools/crypto/TextBinary')),
+  'random-token': lazy(() => import('../tools/crypto/RandomToken')),
+  'xor-cipher': lazy(() => import('../tools/crypto/XorCipher')),
 }
 
 export default function ToolPage() {
