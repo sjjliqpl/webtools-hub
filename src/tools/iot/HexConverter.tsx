@@ -27,26 +27,20 @@ type InputBase = 'hex' | 'dec' | 'bin' | 'text'
 export default function HexConverter() {
   const [inputBase, setInputBase] = useState<InputBase>('hex')
   const [input, setInput] = useState('')
-  const [error, setError] = useState('')
 
-  const getBytes = (): number[] | null => {
-    if (!input.trim()) return null
+  const getResult = (): { bytes: number[] | null; error: string } => {
+    if (!input.trim()) return { bytes: null, error: '' }
     if (inputBase === 'text') {
-      return Array.from(new TextEncoder().encode(input))
+      return { bytes: Array.from(new TextEncoder().encode(input)), error: '' }
     }
-    const bytes = parseInput(input, inputBase as 'hex' | 'dec' | 'bin')
-    if (!bytes) {
-      setError('输入格式无效，请检查数值范围（每个字节 0-255）')
-      return null
+    const parsed = parseInput(input, inputBase as 'hex' | 'dec' | 'bin')
+    if (!parsed) {
+      return { bytes: null, error: '输入格式无效，请检查数值范围（每个字节 0-255）' }
     }
-    return bytes
+    return { bytes: parsed, error: '' }
   }
 
-  const bytes = (() => {
-    setError('')
-    if (!input.trim()) return null
-    return getBytes()
-  })()
+  const { bytes, error } = getResult()
 
   const BASES: { key: InputBase; label: string; placeholder: string }[] = [
     { key: 'hex', label: '十六进制', placeholder: '例: FF 00 1A 2B 或 FF001A2B' },
@@ -67,7 +61,7 @@ export default function HexConverter() {
           {BASES.map(b => (
             <button
               key={b.key}
-              onClick={() => { setInputBase(b.key); setInput(''); setError('') }}
+              onClick={() => { setInputBase(b.key); setInput('') }}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${inputBase === b.key ? 'bg-teal-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
             >
               {b.label}
@@ -77,7 +71,7 @@ export default function HexConverter() {
 
         <textarea
           value={input}
-          onChange={e => { setInput(e.target.value); setError('') }}
+          onChange={e => setInput(e.target.value)}
           placeholder={current.placeholder}
           rows={3}
           className="w-full rounded-xl border border-slate-200 p-4 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30 resize-y"
