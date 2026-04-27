@@ -60,8 +60,8 @@ export default function ClickPrecision() {
 
   const newTargets = useCallback((r: number, count: number) => {
     const ts = generateTargets(count, r);
-    nextIdRef.current += count;
     setTargets(ts.map(t => ({ ...t, id: t.id + nextIdRef.current })));
+    nextIdRef.current += count;
     clickStartRef.current = Date.now();
   }, []);
 
@@ -101,7 +101,7 @@ export default function ClickPrecision() {
     if (remaining.length === 0) {
       newTargets(nextRadius, diff.dots);
     } else {
-      setTargets(remaining.map(t => ({ ...t })));
+      setTargets(remaining);
       clickStartRef.current = Date.now();
     }
   };
