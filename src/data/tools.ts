@@ -22,6 +22,7 @@ export const categories: Category[] = [
   { id: 'games', name: '游戏安全', icon: '🎮', color: '#ef4444' },
   { id: 'crypto', name: '密码安全', icon: '🔒', color: '#8b5cf6' },
   { id: 'iot', name: '物联网工具', icon: '📡', color: '#0ea5e9' },
+  { id: 'test', name: '能力测试', icon: '🧪', color: '#14b8a6' },
 ]
 
 export const tools: Tool[] = [
@@ -99,6 +100,13 @@ export const tools: Tool[] = [
   { id: 'bitwise-calc', name: '位运算计算器', description: 'AND/OR/XOR/NOT/移位运算', category: 'iot', icon: '⚙️' },
   { id: 'iot-power', name: '设备功耗计算器', description: '估算 IoT 设备电池续航时间', category: 'iot', icon: '🔋' },
   { id: 'baud-rate', name: '波特率计算器', description: 'UART/RS-485 串口数据传输计算', category: 'iot', icon: '📶' },
+
+  // 能力测试
+  { id: 'visual-memory', name: '视觉记忆测试', description: '记住高亮格子的位置，测试视觉记忆力', category: 'test', icon: '🧠' },
+  { id: 'number-memory', name: '数字记忆测试', description: '记忆越来越长的数字序列', category: 'test', icon: '🔢' },
+  { id: 'click-precision', name: '鼠标精确点击', description: '点击越来越小的目标，测试鼠标精准度', category: 'test', icon: '🎯' },
+  { id: 'color-blind-test', name: '色盲检测', description: '辨别有色点图中的隐藏数字', category: 'test', icon: '🌈' },
+  { id: 'aim-trainer', name: '瞄准训练', description: '快速点击随机出现的目标，测试手眼协调', category: 'test', icon: '⚡' },
 
   // 游戏与安全
   { id: 'password-generator', name: '随机密码生成', description: '自定义密码生成器', category: 'games', icon: '🔑' },

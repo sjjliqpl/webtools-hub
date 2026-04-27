@@ -59,6 +59,7 @@ export const categoryNames: Record<string, Record<Lang, string>> = {
   games: { zh: '游戏安全', en: 'Games & Security' },
   crypto: { zh: '密码安全', en: 'Crypto & Security' },
   iot: { zh: '物联网工具', en: 'IoT Tools' },
+  test: { zh: '能力测试', en: 'Ability Tests' },
 }
 
 export const toolTranslations: Record<string, { name: string; description: string }> = {
@@ -148,4 +149,11 @@ export const toolTranslations: Record<string, { name: string; description: strin
   'bitwise-calc': { name: 'Bitwise Calculator', description: 'AND, OR, XOR, NOT, and bit shift operations' },
   'iot-power': { name: 'IoT Power Calculator', description: 'Estimate IoT device battery life from current profile' },
   'baud-rate': { name: 'Baud Rate Calculator', description: 'Calculate UART/RS-485 serial transmission time' },
+
+  // Ability Tests
+  'visual-memory': { name: 'Visual Memory', description: 'Memorize highlighted grid cells and recreate them' },
+  'number-memory': { name: 'Number Memory', description: 'Memorize increasingly long digit sequences' },
+  'click-precision': { name: 'Click Precision', description: 'Click shrinking targets to test mouse accuracy' },
+  'color-blind-test': { name: 'Color Blind Test', description: 'Identify hidden numbers in colored-dot patterns' },
+  'aim-trainer': { name: 'Aim Trainer', description: 'Click appearing targets to test hand-eye coordination' },
 }
