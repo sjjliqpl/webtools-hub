@@ -62,7 +62,7 @@ export default function ClickPrecision() {
     }
   };
 
-  const accuracy = attempts > 0 ? Math.round((score / TOTAL) * 100) : 0;
+  const accuracy = attempts > 0 ? Math.round((score / attempts) * 100) : 0;
 
   return (
     <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-md mx-auto">

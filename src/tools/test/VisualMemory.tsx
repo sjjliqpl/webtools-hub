@@ -23,7 +23,7 @@ export default function VisualMemory() {
 
   const cellCount = 2 + level;
 
-  const startRound = useCallback((_lvl: number) => {
+  const startRound = useCallback(() => {
     const cells = pickRandom(cellCount, GRID);
     setHighlighted(cells);
     setSelected([]);
@@ -38,7 +38,7 @@ export default function VisualMemory() {
   const handleStart = () => {
     setLevel(1);
     setScore(0);
-    startRound(1);
+    startRound();
   };
 
   const handleCellClick = (idx: number) => {
@@ -60,7 +60,7 @@ export default function VisualMemory() {
       setScore(newScore);
       setBest(b => Math.max(b, newScore));
       setLevel(newLevel);
-      startRound(newLevel);
+      startRound();
     } else {
       setBest(b => Math.max(b, score));
       setPhase("idle");
