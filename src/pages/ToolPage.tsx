@@ -78,6 +78,11 @@ const toolComponents: Record<string, React.LazyExoticComponent<React.ComponentTy
   'bitwise-calc': lazy(() => import('../tools/iot/BitwiseCalc')),
   'iot-power': lazy(() => import('../tools/iot/IotPower')),
   'baud-rate': lazy(() => import('../tools/iot/BaudRate')),
+  'visual-memory': lazy(() => import('../tools/test/VisualMemory')),
+  'number-memory': lazy(() => import('../tools/test/NumberMemory')),
+  'click-precision': lazy(() => import('../tools/test/ClickPrecision')),
+  'color-blind-test': lazy(() => import('../tools/test/ColorBlindTest')),
+  'aim-trainer': lazy(() => import('../tools/test/AimTrainer')),
 }
 
 export default function ToolPage() {
