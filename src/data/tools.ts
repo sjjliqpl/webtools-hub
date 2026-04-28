@@ -103,7 +103,7 @@ export const tools: Tool[] = [
 
   // 能力测试
   { id: 'visual-memory', name: '视觉记忆测试', description: '记住高亮格子的位置，测试视觉记忆力', category: 'test', icon: '🧠' },
-  { id: 'number-memory', name: '数字记忆测试', description: '记忆越来越长的数字序列', category: 'test', icon: '🔢' },
+  { id: 'number-memory', name: '数字记忆测试', description: '自定义时长与位数，点击面板开始，统计测试正确率', category: 'test', icon: '🔢' },
   { id: 'click-precision', name: '鼠标精确点击', description: '点击越来越小的目标，测试鼠标精准度', category: 'test', icon: '🎯' },
   { id: 'color-blind-test', name: '色盲检测', description: '辨别有色点图中的隐藏数字', category: 'test', icon: '🌈' },
   { id: 'aim-trainer', name: '瞄准训练', description: '快速点击随机出现的目标，测试手眼协调', category: 'test', icon: '⚡' },
