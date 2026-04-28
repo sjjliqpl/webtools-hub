@@ -3,10 +3,10 @@ import { useState, useEffect, useRef, useCallback } from "react";
 type Phase = "idle" | "show" | "input" | "result";
 
 const DIFFICULTY_OPTIONS = [
-  { label: "简单", multiplier: 2.0 },
-  { label: "普通", multiplier: 1.0 },
-  { label: "困难", multiplier: 0.5 },
-  { label: "极难", multiplier: 0.25 },
+  { label: "简单", multiplier: 1.0 },
+  { label: "普通", multiplier: 0.5 },
+  { label: "困难", multiplier: 0.2 },
+  { label: "极难", multiplier: 0.05 },
 ];
 
 function generateNumber(digits: number): string {
@@ -78,7 +78,7 @@ export default function NumberMemory() {
               </button>
             ))}
           </div>
-          <p className="text-xs text-slate-400 mb-4">显示时长 (3位数): {Math.round((2 + 3 * 0.5) * 1000 * DIFFICULTY_OPTIONS[diffIdx].multiplier)} ms</p>
+          <p className="text-xs text-slate-400 mb-4">显示时长 (6位数): {Math.round((2 + 3 * 0.5) * 1000 * DIFFICULTY_OPTIONS[diffIdx].multiplier)} ms</p>
           <button
             onClick={handleStart}
             className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
