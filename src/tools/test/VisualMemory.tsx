@@ -2,6 +2,13 @@ import { useState, useEffect, useCallback, useRef } from "react";
 
 type Phase = "idle" | "show" | "input" | "result";
 
+const DIFFICULTY_OPTIONS = [
+  { label: "简单", ms: 3000 },
+  { label: "普通", ms: 1500 },
+  { label: "困难", ms: 800 },
+  { label: "极难", ms: 400 },
+];
+
 function pickRandom(n: number, max: number): number[] {
   const pool = Array.from({ length: max }, (_, i) => i);
   for (let i = pool.length - 1; i > 0; i--) {
@@ -19,18 +26,20 @@ export default function VisualMemory() {
   const [best, setBest] = useState(0);
   const [highlighted, setHighlighted] = useState<number[]>([]);
   const [selected, setSelected] = useState<number[]>([]);
+  const [diffIdx, setDiffIdx] = useState(1);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const displayMs = DIFFICULTY_OPTIONS[diffIdx].ms;
 
   const cellCount = 2 + level;
 
-  const startRound = useCallback(() => {
+  const startRound = useCallback((ms: number) => {
     const cells = pickRandom(cellCount, GRID);
     setHighlighted(cells);
     setSelected([]);
     setPhase("show");
     timerRef.current = setTimeout(() => {
       setPhase("input");
-    }, 1500);
+    }, ms);
   }, [cellCount]);
 
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
@@ -38,7 +47,7 @@ export default function VisualMemory() {
   const handleStart = () => {
     setLevel(1);
     setScore(0);
-    startRound();
+    startRound(displayMs);
   };
 
   const handleCellClick = (idx: number) => {
@@ -60,7 +69,7 @@ export default function VisualMemory() {
       setScore(newScore);
       setBest(b => Math.max(b, newScore));
       setLevel(newLevel);
-      startRound();
+      startRound(displayMs);
     } else {
       setBest(b => Math.max(b, score));
       setPhase("idle");
@@ -93,6 +102,18 @@ export default function VisualMemory() {
       {phase === "idle" && (
         <div className="text-center py-8">
           <p className="text-slate-500 mb-4 text-sm">记住高亮的格子，然后在输入阶段点击它们</p>
+          <div className="flex gap-2 justify-center mb-4">
+            {DIFFICULTY_OPTIONS.map((d, i) => (
+              <button
+                key={d.label}
+                onClick={() => setDiffIdx(i)}
+                className={`px-3 py-1 rounded-lg text-xs font-medium border transition-colors ${diffIdx === i ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-slate-600 border-slate-300 hover:border-indigo-400"}`}
+              >
+                {d.label}
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-slate-400 mb-4">显示时长：{displayMs} ms</p>
           <button
             onClick={handleStart}
             className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
@@ -105,7 +126,7 @@ export default function VisualMemory() {
       {phase !== "idle" && (
         <>
           <div className="mb-3 text-sm text-slate-600 text-center">
-            {phase === "show" && `记住 ${highlighted.length} 个格子的位置`}
+            {phase === "show" && `记住 ${highlighted.length} 个格子的位置 (${displayMs} ms)`}
             {phase === "input" && `点击你记住的 ${highlighted.length} 个格子 (${selected.length}/${highlighted.length})`}
             {phase === "result" && (
               <span>

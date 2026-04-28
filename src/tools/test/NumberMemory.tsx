@@ -2,6 +2,13 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 type Phase = "idle" | "show" | "input" | "result";
 
+const DIFFICULTY_OPTIONS = [
+  { label: "简单", multiplier: 2.0 },
+  { label: "普通", multiplier: 1.0 },
+  { label: "困难", multiplier: 0.5 },
+  { label: "极难", multiplier: 0.25 },
+];
+
 function generateNumber(digits: number): string {
   let n = "";
   for (let i = 0; i < digits; i++) {
@@ -16,14 +23,17 @@ export default function NumberMemory() {
   const [bestLevel, setBestLevel] = useState(0);
   const [current, setCurrent] = useState("");
   const [answer, setAnswer] = useState("");
+  const [diffIdx, setDiffIdx] = useState(1);
+  const [showMs, setShowMs] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const startRound = useCallback((lvl: number) => {
+  const startRound = useCallback((lvl: number, multiplier: number) => {
     const num = generateNumber(lvl);
     setCurrent(num);
     setAnswer("");
     setPhase("show");
-    const duration = (2 + lvl * 0.5) * 1000;
+    const duration = Math.round((2 + lvl * 0.5) * 1000 * multiplier);
+    setShowMs(duration);
     timerRef.current = setTimeout(() => setPhase("input"), duration);
   }, []);
 
@@ -31,7 +41,7 @@ export default function NumberMemory() {
 
   const handleStart = () => {
     setLevel(3);
-    startRound(3);
+    startRound(3, DIFFICULTY_OPTIONS[diffIdx].multiplier);
   };
 
   const handleSubmit = () => {
@@ -39,7 +49,7 @@ export default function NumberMemory() {
       const next = level + 1;
       setLevel(next);
       setPhase("idle");
-      startRound(next);
+      startRound(next, DIFFICULTY_OPTIONS[diffIdx].multiplier);
     } else {
       setBestLevel(b => Math.max(b, level));
       setPhase("result");
@@ -57,6 +67,18 @@ export default function NumberMemory() {
       {phase === "idle" && (
         <div className="text-center py-8">
           <p className="text-slate-500 mb-4 text-sm">数字显示后消失，输入你记住的数字</p>
+          <div className="flex gap-2 justify-center mb-4">
+            {DIFFICULTY_OPTIONS.map((d, i) => (
+              <button
+                key={d.label}
+                onClick={() => setDiffIdx(i)}
+                className={`px-3 py-1 rounded-lg text-xs font-medium border transition-colors ${diffIdx === i ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-slate-600 border-slate-300 hover:border-indigo-400"}`}
+              >
+                {d.label}
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-slate-400 mb-4">显示时长 (3位数): {Math.round((2 + 3 * 0.5) * 1000 * DIFFICULTY_OPTIONS[diffIdx].multiplier)} ms</p>
           <button
             onClick={handleStart}
             className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
@@ -69,7 +91,7 @@ export default function NumberMemory() {
       {phase === "show" && (
         <div className="text-center py-12">
           <div className="text-5xl font-mono font-bold text-slate-800 tracking-widest">{current}</div>
-          <p className="text-sm text-slate-400 mt-4">记住这个数字…</p>
+          <p className="text-sm text-slate-400 mt-4">记住这个数字… ({showMs} ms)</p>
         </div>
       )}
 
