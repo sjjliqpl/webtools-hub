@@ -3,10 +3,10 @@ import { useState, useEffect, useCallback, useRef } from "react";
 type Phase = "idle" | "show" | "input" | "result";
 
 const DIFFICULTY_OPTIONS = [
-  { label: "简单", ms: 3000 },
-  { label: "普通", ms: 1500 },
-  { label: "困难", ms: 800 },
-  { label: "极难", ms: 400 },
+  { label: "简单", ms: 1000 },
+  { label: "普通", ms: 500 },
+  { label: "困难", ms: 200 },
+  { label: "极难", ms: 50 },
 ];
 
 function pickRandom(n: number, max: number): number[] {
