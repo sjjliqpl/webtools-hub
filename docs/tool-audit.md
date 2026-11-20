@@ -120,3 +120,10 @@
 - 数字曝光实测为 74/119/226/327/518/1022/2017/3023 ms（设置 50/100/200/300/500/1000/2000/3000 ms）；含下一帧及调度延迟，不宣称实验级时序精度。
 - 参考与实现：侧栏 220px、顶栏 56px、主色 #2563eb、背景 #f8f9fc、8px 面板圆角与独立滚动保持一致；工具内容采用卡片目录和专用训练区域。手机使用抽屉导航，深色使用同结构深色变量。
 - Browser plugin not available；采用 Playwright CLI 验证。未覆盖真实触屏设备、Safari/Firefox、所有算法输入组合与环境音的主观音质。
+
+## 发布验证
+
+- 功能提交：`c3b81f41a952d00ff5f400967c6ad26c8fa4e8a4`。
+- [Pages Action 44736037214](https://github.com/sjjliqpl/webtools-hub/actions/runs/44736037214)：build 与 deploy 均成功。
+- [线上首页](https://sjjliqpl.github.io/webtools-hub/) 返回 HTTP 200，目录为 88 项。
+- 直接打开 `/tool/number-memory?from=qa#settings` 并刷新后，路径、查询与锚点均保留。八档时长、50ms 答题、正则 Worker 与键盘训练操作通过，未捕获页面异常。

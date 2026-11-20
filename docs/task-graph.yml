@@ -36,6 +36,6 @@ tasks:
     title: 验证文档与 Pages 发布
     stage: release
     dependencies: [TASK-003, TASK-004]
-    status: in_progress
+    status: done
     verification_commands: [npm run lint, npm test, npm run build]
     acceptance_criteria: [更新 README 与审查记录, 提交推送 main, 同提交 Pages Action 成功]
