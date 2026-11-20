@@ -70,8 +70,7 @@ export default function BitwiseCalc() {
 
   return (
     <div className="space-y-4 max-w-2xl mx-auto">
-      <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-800 mb-1">位运算计算器</h2>
+      <div className="tool-surface">
         <p className="text-sm text-slate-500 mb-4">对整数进行按位运算，常用于 IoT 寄存器解析与标志位操作</p>
 
         {/* Operation Selector */}
@@ -94,7 +93,7 @@ export default function BitwiseCalc() {
             <button
               key={b}
               onClick={() => setBits(b)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${bits === b ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${bits === b ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
             >
               {b} 位
             </button>
@@ -110,7 +109,7 @@ export default function BitwiseCalc() {
               value={aStr}
               onChange={e => setAStr(e.target.value)}
               placeholder="支持 0x.., 0b.., 十进制"
-              className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+              className="w-full rounded-md border border-slate-200 px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30"
             />
             {a !== null && (
               <p className="text-xs text-slate-400 mt-1 font-mono">{toBin32(a)}</p>
@@ -126,7 +125,7 @@ export default function BitwiseCalc() {
                 value={bStr}
                 onChange={e => setBStr(e.target.value)}
                 placeholder={op === 'LSHIFT' || op === 'RSHIFT' ? '位移量（0-31）' : '支持 0x.., 0b.., 十进制'}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+                className="w-full rounded-md border border-slate-200 px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30"
               />
               {b !== null && op !== 'LSHIFT' && op !== 'RSHIFT' && (
                 <p className="text-xs text-slate-400 mt-1 font-mono">{toBin32(b)}</p>
@@ -151,26 +150,26 @@ export default function BitwiseCalc() {
       </div>
 
       {result !== null && (
-        <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+        <div className="tool-surface">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-3">运算结果</p>
-          <div className="bg-teal-50 rounded-xl px-4 py-3 mb-3">
+          <div className="bg-teal-50 rounded-md px-4 py-3 mb-3">
             <p className="text-xs text-teal-600 mb-1">{currentOp.symbol}</p>
             <p className="text-lg font-mono font-bold text-teal-800 break-all">{displayNum(result, displayBase)}</p>
           </div>
-          <div className="bg-slate-50 rounded-xl px-4 py-3">
+          <div className="bg-slate-50 rounded-md px-4 py-3">
             <p className="text-xs text-slate-500 mb-1">32 位二进制表示（每 4 位一组）</p>
             <p className="text-sm font-mono text-slate-700 break-all">{toBin32(result)}</p>
           </div>
           <div className="grid grid-cols-3 gap-2 mt-3">
-            <div className="bg-slate-50 rounded-xl px-3 py-2">
+            <div className="bg-slate-50 rounded-md px-3 py-2">
               <p className="text-xs text-slate-400 mb-0.5">十六进制</p>
               <p className="text-sm font-mono text-slate-700">0x{(result >>> 0).toString(16).toUpperCase().padStart(8, '0')}</p>
             </div>
-            <div className="bg-slate-50 rounded-xl px-3 py-2">
+            <div className="bg-slate-50 rounded-md px-3 py-2">
               <p className="text-xs text-slate-400 mb-0.5">无符号十进制</p>
               <p className="text-sm font-mono text-slate-700">{result >>> 0}</p>
             </div>
-            <div className="bg-slate-50 rounded-xl px-3 py-2">
+            <div className="bg-slate-50 rounded-md px-3 py-2">
               <p className="text-xs text-slate-400 mb-0.5">有符号十进制</p>
               <p className="text-sm font-mono text-slate-700">{result | 0}</p>
             </div>

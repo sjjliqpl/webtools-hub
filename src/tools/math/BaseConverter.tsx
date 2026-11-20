@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { convertBase } from "../../lib/toolMath";
 
 type Base = "bin" | "oct" | "dec" | "hex";
 
@@ -25,40 +26,20 @@ export default function BaseConverter() {
       return;
     }
 
-    const patterns: Record<number, RegExp> = {
-      2: /^[01]+$/,
-      8: /^[0-7]+$/,
-      10: /^[0-9]+$/,
-      16: /^[0-9a-fA-F]+$/,
-    };
-
-    if (!patterns[base].test(value)) {
-      setValues((prev) => ({ ...prev, [key]: value }));
-      setError(`无效的${fields.find((f) => f.key === key)?.label}输入`);
-      return;
+    try {
+      const converted = convertBase(value, base);
+      setValues({ bin: converted[2], oct: converted[8], dec: converted[10], hex: converted[16], [key]: value });
+      setError("");
+    } catch (cause) {
+      setValues({ bin: "", oct: "", dec: "", hex: "", [key]: value });
+      setError((cause as Error).message);
     }
-
-    setError("");
-    const decimal = parseInt(value, base);
-    if (isNaN(decimal)) {
-      setError("转换失败");
-      return;
-    }
-
-    setValues({
-      bin: decimal.toString(2),
-      oct: decimal.toString(8),
-      dec: decimal.toString(10),
-      hex: decimal.toString(16).toUpperCase(),
-      [key]: value,
-    });
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-      <h2 className="text-lg font-semibold text-slate-800 mb-5">进制转换</h2>
+    <div className="tool-surface">
       {error && (
-        <div className="mb-4 text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2">
+        <div className="mb-4 text-sm text-red-600 bg-red-50 rounded-md px-4 py-2">
           {error}
         </div>
       )}
@@ -73,7 +54,7 @@ export default function BaseConverter() {
               value={values[f.key]}
               placeholder={f.placeholder}
               onChange={(e) => handleChange(f.key, e.target.value, f.base)}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+              className="w-full rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
             />
           </div>
         ))}

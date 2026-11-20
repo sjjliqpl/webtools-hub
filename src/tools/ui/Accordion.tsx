@@ -41,9 +41,7 @@ export default function Accordion() {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
-      <h2 className="text-lg font-semibold text-slate-800">FAQ</h2>
-
+    <div className="tool-surface space-y-4">
       <div className="divide-y divide-slate-100">
         {FAQ_ITEMS.map((item, i) => {
           const isOpen = openIndex === i;

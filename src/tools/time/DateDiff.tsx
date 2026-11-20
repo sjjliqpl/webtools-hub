@@ -30,40 +30,38 @@ export default function DateDiff() {
 
   const cards = diff
     ? [
-        { label: 'Days', value: diff.days },
-        { label: 'Weeks', value: diff.weeks },
-        { label: 'Months', value: diff.months },
-        { label: 'Years', value: diff.years },
+        { label: '天', value: diff.days },
+        { label: '周', value: diff.weeks },
+        { label: '月', value: diff.months },
+        { label: '年', value: diff.years },
       ]
     : null;
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-6">
-      <h2 className="text-lg font-semibold text-slate-800">📅 Date Difference</h2>
-
+    <div className="tool-surface space-y-6">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1">
-          <label className="text-xs font-medium text-slate-500">Start Date</label>
+          <label className="text-xs font-medium text-slate-500">开始日期</label>
           <input
             type="date"
             value={dateA}
             onChange={(e) => setDateA(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+            className="w-full rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
           />
         </div>
         <div className="space-y-1">
-          <label className="text-xs font-medium text-slate-500">End Date</label>
+          <label className="text-xs font-medium text-slate-500">结束日期</label>
           <input
             type="date"
             value={dateB}
             onChange={(e) => setDateB(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+            className="w-full rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
           />
         </div>
       </div>
 
       {diff && dateA === dateB && (
-        <p className="text-sm text-slate-500 text-center">Both dates are the same.</p>
+        <p className="text-sm text-slate-500 text-center">两个日期相同。</p>
       )}
 
       {cards && (
@@ -71,9 +69,9 @@ export default function DateDiff() {
           {cards.map((c) => (
             <div
               key={c.label}
-              className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-4 text-center"
+              className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-md p-4 text-center"
             >
-              <div className="text-2xl font-bold text-indigo-700">{c.value}</div>
+              <div className="text-2xl font-bold text-blue-700">{c.value}</div>
               <div className="text-xs text-slate-500 mt-1">{c.label}</div>
             </div>
           ))}
@@ -81,7 +79,7 @@ export default function DateDiff() {
       )}
 
       {!valid && (
-        <p className="text-sm text-slate-400 text-center">Select two dates to see the difference.</p>
+        <p className="text-sm text-slate-400 text-center">选择两个日期查看间隔。</p>
       )}
     </div>
   );

@@ -24,13 +24,11 @@ export default function TextDedup() {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">文本去重</h2>
-
+    <div className="tool-surface">
       <div className="flex items-center gap-4 mb-4">
         <button
           onClick={deduplicate}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+          className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
         >
           去重
         </button>
@@ -45,7 +43,7 @@ export default function TextDedup() {
         </label>
         {removedCount > 0 && (
           <span className="text-sm text-slate-500">
-            移除了 <span className="font-semibold text-indigo-600">{removedCount}</span> 行重复内容
+            移除了 <span className="font-semibold text-blue-600">{removedCount}</span> 行重复内容
           </span>
         )}
       </div>
@@ -57,7 +55,7 @@ export default function TextDedup() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             rows={14}
-            className="w-full rounded-xl border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 font-mono resize-none"
+            className="w-full rounded-md border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 font-mono resize-none"
             placeholder="每行输入一条内容..."
           />
         </div>
@@ -67,7 +65,7 @@ export default function TextDedup() {
             value={output}
             readOnly
             rows={14}
-            className="w-full rounded-xl border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 font-mono bg-slate-50 resize-none"
+            className="w-full rounded-md border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 font-mono bg-slate-50 resize-none"
             placeholder="去重后的结果..."
           />
         </div>

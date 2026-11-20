@@ -35,8 +35,7 @@ export default function PasswordStrength() {
   const strength = getStrengthInfo(score, password.length);
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-1">密码强度检测</h2>
+    <div className="tool-surface max-w-lg mx-auto">
       <p className="text-sm text-slate-500 mb-4">输入密码，实时分析安全强度</p>
 
       <div className="relative mb-4">
@@ -45,7 +44,7 @@ export default function PasswordStrength() {
           value={password}
           onChange={e => setPassword(e.target.value)}
           placeholder="请输入密码…"
-          className="w-full rounded-xl border border-slate-200 px-4 py-3 pr-16 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30 font-mono"
+          className="w-full rounded-md border border-slate-200 px-4 py-3 pr-16 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30 font-mono"
         />
         <button
           onClick={() => setShow(s => !s)}

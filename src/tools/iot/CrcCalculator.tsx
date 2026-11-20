@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState } from 'react'
 
 function crc8(data: number[]): number {
@@ -141,15 +142,14 @@ export default function CrcCalculator() {
   }
 
   const handleCopy = async (val: string, key: string) => {
-    await navigator.clipboard.writeText(val)
+    if (!await copyText(val)) return;
     setCopied(key)
     setTimeout(() => setCopied(null), 1500)
   }
 
   return (
     <div className="space-y-4 max-w-2xl mx-auto">
-      <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-800 mb-1">CRC 校验计算器</h2>
+      <div className="tool-surface">
         <p className="text-sm text-slate-500 mb-4">计算 CRC-8、CRC-16/Modbus、CRC-16/CCITT、CRC-32 校验值</p>
 
         <div className="flex gap-2 mb-3">
@@ -169,28 +169,28 @@ export default function CrcCalculator() {
           onChange={e => setInput(e.target.value)}
           placeholder={mode === 'hex' ? '输入十六进制字节，如: 01 02 03 FF 或 010203FF' : '输入要计算 CRC 的文本内容'}
           rows={3}
-          className="w-full rounded-xl border border-slate-200 p-4 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30 resize-y mb-3"
+          className="w-full rounded-md border border-slate-200 p-4 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30 resize-y mb-3"
         />
 
         {error && (
-          <div className="mb-3 text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2">{error}</div>
+          <div className="mb-3 text-sm text-red-600 bg-red-50 rounded-md px-4 py-2">{error}</div>
         )}
 
         <button
           onClick={calculate}
           disabled={!input.trim()}
-          className="w-full px-4 py-2.5 bg-teal-600 text-white rounded-xl text-sm font-medium hover:bg-teal-700 transition-colors disabled:opacity-50"
+          className="w-full px-4 py-2.5 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 transition-colors disabled:opacity-50"
         >
           计算 CRC
         </button>
       </div>
 
       {results && (
-        <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+        <div className="tool-surface">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-3">计算结果</p>
           <div className="space-y-3">
             {results.map(r => (
-              <div key={r.name} className="bg-slate-50 rounded-xl p-4">
+              <div key={r.name} className="bg-slate-50 rounded-md p-4">
                 <div className="flex items-start justify-between gap-2 mb-1">
                   <div>
                     <span className="text-sm font-semibold text-slate-700">{r.name}</span>

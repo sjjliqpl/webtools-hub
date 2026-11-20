@@ -31,7 +31,7 @@ function generatePalette(): string[] {
   const saturation = 65 + Math.floor(Math.random() * 20);
   const lightness = 55 + Math.floor(Math.random() * 15);
   return Array.from({ length: 5 }, (_, i) => {
-    const hue = (baseHue + i * 72 + Math.floor(Math.random() * 20 - 10)) % 360;
+    const hue = (baseHue + i * 72 + Math.floor(Math.random() * 20 - 10) + 360) % 360;
     return hslToHex(hue, saturation, lightness);
   });
 }
@@ -44,7 +44,7 @@ export default function PaletteGenerator() {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.code === "Space" && (e.target as HTMLElement).tagName !== "INPUT") {
+      if (e.code === "Space" && !((e.target as HTMLElement).closest("input,textarea,select,button,[contenteditable=true]"))) {
         e.preventDefault();
         generate();
       }
@@ -53,32 +53,32 @@ export default function PaletteGenerator() {
     return () => window.removeEventListener("keydown", handler);
   }, [generate]);
 
-  const copyColor = (hex: string) => {
-    navigator.clipboard.writeText(hex);
-    setToast(hex);
+  const copyColor = async (hex: string) => {
+    try { await navigator.clipboard.writeText(hex); setToast(`已复制 ${hex}`); }
+    catch { setToast('复制失败，请手动复制色值'); }
     setTimeout(() => setToast(""), 1500);
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-slate-800">调色板生成器</h2>
-        <div className="flex items-center gap-3">
+    <div className="tool-surface">
+      <div className="flex flex-wrap items-center justify-between mb-4">
+
+        <div className="flex flex-wrap items-center gap-3">
           <span className="text-xs text-slate-400">按空格键生成</span>
           <button
             onClick={generate}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
           >
             生成调色板
           </button>
         </div>
       </div>
 
-      <div className="flex gap-3 h-64 relative">
+      <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 min-h-64 relative">
         {colors.map((color, i) => (
           <button
             key={`${color}-${i}`}
-            className="flex-1 rounded-2xl flex items-end justify-center pb-4 transition-transform hover:scale-[1.02] cursor-pointer border-0"
+            className="color-swatch min-h-20 rounded-lg flex items-end justify-center p-3 transition-transform hover:scale-[1.02] cursor-pointer border-0"
             style={{ backgroundColor: color }}
             onClick={() => copyColor(color)}
             title="点击复制"
@@ -91,8 +91,8 @@ export default function PaletteGenerator() {
       </div>
 
       {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-sm px-4 py-2 rounded-xl shadow-lg animate-pulse z-50">
-          已复制 {toast}
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-sm px-4 py-2 rounded-md shadow-lg animate-pulse z-50">
+          {toast}
         </div>
       )}
     </div>

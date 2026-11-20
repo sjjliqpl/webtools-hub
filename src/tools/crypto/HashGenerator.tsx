@@ -1,78 +1,18 @@
-import { useState } from 'react';
-
-async function sha(algorithm: string, text: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(text);
-  const hashBuffer = await crypto.subtle.digest(algorithm, data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-const ALGOS = ['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'] as const;
-type Algo = typeof ALGOS[number];
-
-export default function HashGenerator() {
-  const [text, setText] = useState('');
-  const [hashes, setHashes] = useState<Record<Algo, string>>({} as Record<Algo, string>);
-  const [loading, setLoading] = useState(false);
-  const [copied, setCopied] = useState<string | null>(null);
-
-  const compute = async () => {
-    if (!text) return;
-    setLoading(true);
-    const results = {} as Record<Algo, string>;
-    for (const algo of ALGOS) {
-      results[algo] = await sha(algo, text);
-    }
-    setHashes(results);
-    setLoading(false);
-  };
-
-  const handleCopy = async (val: string, key: string) => {
-    await navigator.clipboard.writeText(val);
-    setCopied(key);
-    setTimeout(() => setCopied(null), 1500);
-  };
-
-  return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-2xl mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-1">哈希值计算</h2>
-      <p className="text-sm text-slate-500 mb-4">输入文本，计算 SHA 系列哈希值</p>
-
-      <textarea
-        value={text}
-        onChange={e => setText(e.target.value)}
-        placeholder="请输入要计算哈希的文本…"
-        rows={3}
-        className="w-full rounded-xl border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30 font-mono resize-y mb-3"
-      />
-
-      <button
-        onClick={compute}
-        disabled={!text || loading}
-        className="w-full px-4 py-2 bg-violet-600 text-white rounded-xl text-sm font-medium hover:bg-violet-700 transition-colors disabled:opacity-50 mb-4"
-      >
-        {loading ? '计算中…' : '计算哈希值'}
-      </button>
-
-      {ALGOS.map(algo => (
-        <div key={algo} className="mb-3">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">{algo}</span>
-            {hashes[algo] && (
-              <button
-                onClick={() => handleCopy(hashes[algo], algo)}
-                className="text-xs text-violet-600 hover:text-violet-800 transition-colors"
-              >
-                {copied === algo ? '已复制 ✓' : '复制'}
-              </button>
-            )}
-          </div>
-          <div className="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-mono bg-slate-50 break-all text-slate-600 min-h-[36px]">
-            {hashes[algo] || <span className="text-slate-300">—</span>}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+import { useEffect, useRef, useState } from 'react'
+import CopyButton from '../../components/CopyButton'
+const ALGOS=['SHA-1','SHA-256','SHA-384','SHA-512']
+export default function HashGenerator(){
+  const [text,setText]=useState(''),[hashes,setHashes]=useState<string[]>([]),[loading,setLoading]=useState(false),[error,setError]=useState('')
+  const request=useRef(0)
+  useEffect(()=>()=>{request.current++},[])
+  async function compute(){
+    const id=++request.current;setLoading(true);setError('');setHashes([])
+    try {
+      const data=new TextEncoder().encode(text)
+      const results=await Promise.all(ALGOS.map(async algo=>Array.from(new Uint8Array(await crypto.subtle.digest(algo,data)),byte=>byte.toString(16).padStart(2,'0')).join('')))
+      if(id===request.current)setHashes(results)
+    }catch{if(id===request.current)setError('计算失败，请使用 HTTPS 或本地开发环境')}
+    finally{if(id===request.current)setLoading(false)}
+  }
+  return <div className="tool-surface"><label className="field-label" htmlFor="hash-text">原始文本（支持空文本）</label><textarea id="hash-text" value={text} onChange={event=>{request.current++;setText(event.target.value);setHashes([]);setLoading(false);setError('')}} rows={4} className="utility-field font-mono" /><div className="training-actions"><button className="primary-button" disabled={loading} onClick={compute}>{loading ? '计算中…' : '计算哈希值'}</button></div>{error&&<p className="error-message" role="alert">{error}</p>}{ALGOS.map((algo,index)=><div key={algo} style={{marginTop:16}}><div className="flex items-center justify-between mb-2"><span className="field-label">{algo}</span>{hashes[index]&&<CopyButton key={hashes[index]} text={hashes[index]} />}</div><div className="utility-output font-mono break-all">{hashes[index]||'—'}</div></div>)}</div>
 }

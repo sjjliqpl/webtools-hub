@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState } from "react";
 
 function toTitleCase(str: string): string {
@@ -21,7 +22,7 @@ export default function CaseConverter() {
   const apply = (fn: (s: string) => string) => setOutput(fn(input));
 
   const copy = async () => {
-    await navigator.clipboard.writeText(output);
+    if (!await copyText(output)) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -34,16 +35,14 @@ export default function CaseConverter() {
   ];
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-      <h2 className="text-lg font-semibold text-slate-900 mb-4">Case Converter</h2>
-
-      <label className="text-sm font-medium text-slate-700 mb-1 block">Input</label>
+    <div className="tool-surface">
+      <label className="text-sm font-medium text-slate-700 mb-1 block">输入</label>
       <textarea
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        placeholder="Enter text to convert…"
+        placeholder="输入需要转换的文本…"
         rows={5}
-        className="w-full rounded-xl border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 font-mono resize-y"
+        className="w-full rounded-md border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 font-mono resize-y"
       />
 
       <div className="flex flex-wrap gap-2 mt-4">
@@ -51,7 +50,7 @@ export default function CaseConverter() {
           <button
             key={b.label}
             onClick={() => apply(b.fn)}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
           >
             {b.label}
           </button>
@@ -60,13 +59,13 @@ export default function CaseConverter() {
 
       <div className="mt-4">
         <div className="flex items-center justify-between mb-1">
-          <label className="text-sm font-medium text-slate-700">Output</label>
+          <label className="text-sm font-medium text-slate-700">输出</label>
           {output && (
             <button
               onClick={copy}
-              className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-sm font-medium hover:bg-slate-200 transition-colors"
+              className="px-4 py-2 bg-slate-100 text-slate-700 rounded-md text-sm font-medium hover:bg-slate-200 transition-colors"
             >
-              {copied ? "Copied!" : "Copy"}
+              {copied ? "已复制" : "复制"}
             </button>
           )}
         </div>
@@ -74,7 +73,7 @@ export default function CaseConverter() {
           value={output}
           readOnly
           rows={5}
-          className="w-full rounded-xl border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 font-mono resize-y bg-slate-50"
+          className="w-full rounded-md border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 font-mono resize-y bg-slate-50"
         />
       </div>
     </div>

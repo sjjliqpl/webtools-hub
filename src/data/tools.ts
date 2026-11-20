@@ -19,10 +19,11 @@ export const categories: Category[] = [
   { id: 'math', name: '数学转换', icon: '🔢', color: '#f59e0b' },
   { id: 'ui', name: 'UI 设计', icon: '🎨', color: '#ec4899' },
   { id: 'time', name: '时间效率', icon: '⏰', color: '#10b981' },
-  { id: 'games', name: '游戏安全', icon: '🎮', color: '#ef4444' },
+  { id: 'games', name: '休闲游戏', icon: '🎮', color: '#ef4444' },
   { id: 'crypto', name: '密码安全', icon: '🔒', color: '#8b5cf6' },
   { id: 'iot', name: '物联网工具', icon: '📡', color: '#0ea5e9' },
-  { id: 'test', name: '能力测试', icon: '🧪', color: '#14b8a6' },
+  { id: 'web', name: '常用工具', icon: '🌐', color: '#2563eb' },
+  { id: 'test', name: '训练与测试', icon: '🧪', color: '#14b8a6' },
 ]
 
 export const tools: Tool[] = [
@@ -103,20 +104,31 @@ export const tools: Tool[] = [
 
   // 能力测试
   { id: 'visual-memory', name: '视觉记忆测试', description: '记住高亮格子的位置，测试视觉记忆力', category: 'test', icon: '🧠' },
-  { id: 'number-memory', name: '数字记忆测试', description: '自定义时长与位数，点击面板开始，统计测试正确率', category: 'test', icon: '🔢' },
+  { id: 'number-memory', name: '数字记忆测试', description: '50 毫秒至 3 秒闪现，训练数字瞬时记忆', category: 'test', icon: '🔢' },
   { id: 'click-precision', name: '鼠标精确点击', description: '点击越来越小的目标，测试鼠标精准度', category: 'test', icon: '🎯' },
-  { id: 'color-blind-test', name: '色盲检测', description: '辨别有色点图中的隐藏数字', category: 'test', icon: '🌈' },
+  { id: 'color-blind-test', name: '颜色辨识练习', description: '辨别点阵中的数字，仅供练习，不代替色觉诊断', category: 'test', icon: '🌈' },
   { id: 'aim-trainer', name: '瞄准训练', description: '快速点击随机出现的目标，测试手眼协调', category: 'test', icon: '⚡' },
 
+  { id: 'click-speed', name: '点击速度训练', description: '5 / 10 / 30 秒点击测试，统计每秒点击次数', category: 'test', icon: '🖱️' },
+  { id: 'mouse-tracking', name: '鼠标追踪训练', description: '跟随移动目标，练习鼠标控制与稳定性', category: 'test', icon: '◎' },
+  { id: 'keyboard-reaction', name: '键盘反应训练', description: 'WASD、方向键与字母键反应训练', category: 'test', icon: '⌨️' },
+  { id: 'keyboard-tester', name: '键盘按键检测', description: '查看按键状态、物理键码与多键响应', category: 'test', icon: '🎹' },
+  { id: 'sequence-memory', name: '顺序记忆训练', description: '复现逐渐变长的闪烁序列', category: 'test', icon: '🧩' },
+  { id: 'stroop-test', name: '颜色干扰训练', description: '忽略文字含义，选择实际墨水颜色', category: 'test', icon: '🎨' },
+  { id: 'regex-tester', name: '正则表达式测试', description: '实时匹配、分组查看与超时保护', category: 'web', icon: '.*' },
+  { id: 'url-parser', name: 'URL 解析器', description: '拆解协议、路径、查询参数与片段', category: 'web', icon: '🔗' },
+  { id: 'text-diff', name: '文本对比', description: '逐行比较文本，标记新增和删除', category: 'web', icon: '≠' },
+  { id: 'image-compressor', name: '图片压缩', description: '本地调整图片尺寸、质量并导出 WebP / JPG', category: 'web', icon: '🖼️' },
+
   // 游戏与安全
-  { id: 'password-generator', name: '随机密码生成', description: '自定义密码生成器', category: 'games', icon: '🔑' },
-  { id: 'typing-test', name: '打字测试', description: 'WPM 速度与准确率', category: 'games', icon: '⌨️' },
+  { id: 'password-generator', name: '随机密码生成', description: '自定义密码生成器', category: 'crypto', icon: '🔑' },
+  { id: 'typing-test', name: '打字测试', description: 'WPM 速度与准确率', category: 'test', icon: '⌨️' },
   { id: 'guess-number', name: '猜数字游戏', description: '猜 1-100 随机数', category: 'games', icon: '🔮' },
   { id: 'coin-dice', name: '抛硬币/掷骰子', description: '3D 动画效果', category: 'games', icon: '🎲' },
   { id: 'tic-tac-toe', name: '井字棋', description: '双人对战井字棋', category: 'games', icon: '⭕' },
   { id: 'memory-game', name: '记忆翻牌', description: '4x4 图标记忆匹配', category: 'games', icon: '🃏' },
   { id: 'calculator', name: '简易计算器', description: '标准计算器布局', category: 'games', icon: '🧮' },
-  { id: 'qrcode', name: '二维码生成', description: '文本生成二维码', category: 'games', icon: '📱' },
-  { id: 'reaction-test', name: '反应时测试', description: '反应速度测试', category: 'games', icon: '⚡' },
-  { id: 'word-filter', name: '敏感词过滤', description: '敏感词替换工具', category: 'games', icon: '🛡️' },
+  { id: 'qrcode', name: '二维码生成', description: '文本生成二维码', category: 'web', icon: '📱' },
+  { id: 'reaction-test', name: '反应时测试', description: '反应速度测试', category: 'test', icon: '⚡' },
+  { id: 'word-filter', name: '敏感词过滤', description: '敏感词替换工具', category: 'text', icon: '🛡️' },
 ]

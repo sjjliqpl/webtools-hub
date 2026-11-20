@@ -63,8 +63,8 @@ export default function ExchangeRate() {
   const conversionRate = (rates[toCurrency] / rates[fromCurrency]).toFixed(4);
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-      <h2 className="text-lg font-semibold text-slate-800 mb-5">汇率换算</h2>
+    <div className="tool-surface">
+      <p className="training-note" style={{ marginBottom:16 }}>离线示例汇率，仅供换算练习，不代表实时市场价格。</p>
       <div className="space-y-4">
         {/* From */}
         <div>
@@ -73,7 +73,7 @@ export default function ExchangeRate() {
             <select
               value={fromCurrency}
               onChange={(e) => handleFromCurrency(e.target.value)}
-              className="rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 bg-white"
+              className="rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 bg-white"
             >
               {codes.map((c) => (
                 <option key={c} value={c}>{currencyNames[c]}</option>
@@ -84,7 +84,7 @@ export default function ExchangeRate() {
               value={fromAmount}
               onChange={(e) => handleFromAmount(e.target.value)}
               placeholder="金额"
-              className="flex-1 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+              className="flex-1 w-full rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
             />
           </div>
         </div>
@@ -109,7 +109,7 @@ export default function ExchangeRate() {
             <select
               value={toCurrency}
               onChange={(e) => handleToCurrency(e.target.value)}
-              className="rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 bg-white"
+              className="rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 bg-white"
             >
               {codes.map((c) => (
                 <option key={c} value={c}>{currencyNames[c]}</option>
@@ -120,15 +120,15 @@ export default function ExchangeRate() {
               value={toAmount}
               onChange={(e) => handleToAmount(e.target.value)}
               placeholder="金额"
-              className="flex-1 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+              className="flex-1 w-full rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
             />
           </div>
         </div>
 
         {/* Rate display */}
-        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-5 text-center">
+        <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-md p-5 text-center">
           <div className="text-xs text-slate-500 mb-1">汇率</div>
-          <div className="text-lg font-bold text-indigo-700">
+          <div className="text-lg font-bold text-blue-700">
             1 {fromCurrency} = {conversionRate} {toCurrency}
           </div>
         </div>

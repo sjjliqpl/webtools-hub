@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState } from 'react';
 
 const MORSE: Record<string, string> = {
@@ -43,18 +44,17 @@ export default function MorseCode() {
 
   const handleCopy = async () => {
     if (!output) return;
-    await navigator.clipboard.writeText(output);
+    if (!await copyText(output)) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-1">摩尔斯电码</h2>
+    <div className="tool-surface max-w-lg mx-auto">
       <p className="text-sm text-slate-500 mb-4">文本与摩尔斯电码双向转换</p>
 
       {/* Mode Toggle */}
-      <div className="flex rounded-xl border border-slate-200 overflow-hidden mb-4">
+      <div className="flex rounded-md border border-slate-200 overflow-hidden mb-4">
         {(['encode', 'decode'] as const).map(m => (
           <button
             key={m}
@@ -71,11 +71,11 @@ export default function MorseCode() {
         onChange={e => setInput(e.target.value)}
         placeholder={mode === 'encode' ? '请输入文本（支持字母、数字、标点）…' : '请输入摩尔斯电码（点和短线，用空格分隔字符，用 / 分隔单词）…'}
         rows={3}
-        className="w-full rounded-xl border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30 font-mono resize-y mb-3"
+        className="w-full rounded-md border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30 font-mono resize-y mb-3"
       />
 
       <div className="relative">
-        <div className="rounded-xl border border-slate-200 p-4 text-sm font-mono bg-slate-50 break-words min-h-[72px] text-slate-700 pr-20 leading-relaxed">
+        <div className="rounded-md border border-slate-200 p-4 text-sm font-mono bg-slate-50 break-words min-h-[72px] text-slate-700 pr-20 leading-relaxed">
           {output || <span className="text-slate-300">结果将显示在此…</span>}
         </div>
         <button

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type CoinResult = '正' | '反';
 type DiceResult = 1 | 2 | 3 | 4 | 5 | 6;
@@ -20,6 +20,9 @@ export default function CoinDice() {
   const [diceRolling, setDiceRolling] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
 
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+
   const addHistory = (entry: HistoryEntry) => {
     setHistory((prev) => [entry, ...prev].slice(0, 10));
   };
@@ -27,33 +30,31 @@ export default function CoinDice() {
   const flipCoin = () => {
     if (coinFlipping) return;
     setCoinFlipping(true);
-    setTimeout(() => {
+    timers.current.push(setTimeout(() => {
       const result: CoinResult = Math.random() < 0.5 ? '正' : '反';
       setCoinResult(result);
       setCoinFlipping(false);
       addHistory({ type: 'coin', value: result });
-    }, 600);
+    }, 600));
   };
 
   const rollDice = () => {
     if (diceRolling) return;
     setDiceRolling(true);
-    setTimeout(() => {
+    timers.current.push(setTimeout(() => {
       const result = (Math.floor(Math.random() * 6) + 1) as DiceResult;
       setDiceResult(result);
       setDiceRolling(false);
       addHistory({ type: 'dice', value: result });
-    }, 600);
+    }, 600));
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">Coin Flip & Dice Roll</h2>
-
+    <div className="tool-surface max-w-lg mx-auto">
       <div className="grid grid-cols-2 gap-6 mb-6">
         {/* Coin */}
         <div className="flex flex-col items-center gap-3">
-          <h3 className="text-sm font-medium text-slate-600">Coin</h3>
+          <h3 className="text-sm font-medium text-slate-600">硬币</h3>
           <div style={{ perspective: '400px' }}>
             <div
               onClick={flipCoin}
@@ -72,19 +73,19 @@ export default function CoinDice() {
           <button
             onClick={flipCoin}
             disabled={coinFlipping}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
           >
-            {coinFlipping ? 'Flipping...' : 'Flip'}
+            {coinFlipping ? '投掷中…' : '抛硬币'}
           </button>
         </div>
 
         {/* Dice */}
         <div className="flex flex-col items-center gap-3">
-          <h3 className="text-sm font-medium text-slate-600">Dice</h3>
+          <h3 className="text-sm font-medium text-slate-600">骰子</h3>
           <div style={{ perspective: '400px' }}>
             <div
               onClick={rollDice}
-              className="w-24 h-24 rounded-2xl bg-white border-2 border-slate-300 relative cursor-pointer select-none shadow-lg"
+              className="w-24 h-24 rounded-lg bg-white border-2 border-slate-300 relative cursor-pointer select-none shadow-lg"
               style={{
                 transition: 'transform 0.6s ease-in-out',
                 transform: diceRolling ? 'rotateX(360deg) rotateY(360deg)' : 'rotateX(0deg) rotateY(0deg)',
@@ -104,9 +105,9 @@ export default function CoinDice() {
           <button
             onClick={rollDice}
             disabled={diceRolling}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
           >
-            {diceRolling ? 'Rolling...' : 'Roll'}
+            {diceRolling ? '投掷中…' : '掷骰子'}
           </button>
         </div>
       </div>
@@ -114,7 +115,7 @@ export default function CoinDice() {
       {/* History */}
       {history.length > 0 && (
         <div>
-          <h3 className="text-sm font-medium text-slate-600 mb-2">History (last 10)</h3>
+          <h3 className="text-sm font-medium text-slate-600 mb-2">最近 10 次结果</h3>
           <div className="flex flex-wrap gap-2">
             {history.map((entry, i) => (
               <span
@@ -122,7 +123,7 @@ export default function CoinDice() {
                 className={`px-3 py-1 rounded-full text-xs font-medium ${
                   entry.type === 'coin'
                     ? 'bg-amber-100 text-amber-700'
-                    : 'bg-indigo-100 text-indigo-700'
+                    : 'bg-blue-100 text-blue-700'
                 }`}
               >
                 {entry.type === 'coin' ? `🪙 ${entry.value}` : `🎲 ${entry.value}`}

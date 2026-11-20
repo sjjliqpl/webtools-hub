@@ -30,24 +30,24 @@ export default function VisualMemory() {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const displayMs = DIFFICULTY_OPTIONS[diffIdx].ms;
 
-  const cellCount = 2 + level;
 
-  const startRound = useCallback((ms: number) => {
-    const cells = pickRandom(cellCount, GRID);
+
+  const startRound = useCallback((ms: number, roundLevel: number) => {
+    const cells = pickRandom(Math.min(25, 2 + roundLevel), GRID);
     setHighlighted(cells);
     setSelected([]);
     setPhase("show");
     timerRef.current = setTimeout(() => {
       setPhase("input");
     }, ms);
-  }, [cellCount]);
+  }, []);
 
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
   const handleStart = () => {
     setLevel(1);
     setScore(0);
-    startRound(displayMs);
+    startRound(displayMs, 1);
   };
 
   const handleCellClick = (idx: number) => {
@@ -65,11 +65,11 @@ export default function VisualMemory() {
     const isAllCorrect = correct === highlighted.length && selected.every(s => highlighted.includes(s));
     if (isAllCorrect) {
       const newScore = score + level;
-      const newLevel = level + 1;
+      const newLevel = Math.min(23, level + 1);
       setScore(newScore);
       setBest(b => Math.max(b, newScore));
       setLevel(newLevel);
-      startRound(displayMs);
+      startRound(displayMs, newLevel);
     } else {
       setBest(b => Math.max(b, score));
       setPhase("idle");
@@ -78,7 +78,7 @@ export default function VisualMemory() {
 
   const getCellStyle = (idx: number): string => {
     if (phase === "show" && highlighted.includes(idx))
-      return "bg-indigo-500";
+      return "bg-blue-500";
     if (phase === "result") {
       const wasHighlighted = highlighted.includes(idx);
       const wasSelected = selected.includes(idx);
@@ -86,13 +86,12 @@ export default function VisualMemory() {
       if (wasSelected && !wasHighlighted) return "bg-red-500";
       if (wasHighlighted && !wasSelected) return "bg-yellow-400";
     }
-    if (phase === "input" && selected.includes(idx)) return "bg-indigo-400";
+    if (phase === "input" && selected.includes(idx)) return "bg-blue-400";
     return "bg-slate-200 hover:bg-slate-300";
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-md mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-1">视觉记忆测试</h2>
+    <div className="tool-surface max-w-md mx-auto">
       <div className="flex gap-4 mb-4 text-sm text-slate-600">
         <span>关卡: <strong>{level}</strong></span>
         <span>得分: <strong>{score}</strong></span>
@@ -107,7 +106,7 @@ export default function VisualMemory() {
               <button
                 key={d.label}
                 onClick={() => setDiffIdx(i)}
-                className={`px-3 py-1 rounded-lg text-xs font-medium border transition-colors ${diffIdx === i ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-slate-600 border-slate-300 hover:border-indigo-400"}`}
+                className={`px-3 py-1 rounded-lg text-xs font-medium border transition-colors ${diffIdx === i ? "bg-blue-600 text-white border-blue-600" : "bg-white text-slate-600 border-slate-300 hover:border-blue-400"}`}
               >
                 {d.label}
               </button>
@@ -116,7 +115,7 @@ export default function VisualMemory() {
           <p className="text-xs text-slate-400 mb-4">显示时长：{displayMs} ms</p>
           <button
             onClick={handleStart}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
           >
             开始
           </button>
@@ -141,6 +140,8 @@ export default function VisualMemory() {
             {Array.from({ length: GRID }, (_, i) => (
               <button
                 key={i}
+                aria-label={`记忆方格 ${i + 1}`}
+                disabled={phase !== "input"}
                 onClick={() => handleCellClick(i)}
                 className={`aspect-square rounded-lg transition-colors ${getCellStyle(i)} ${phase === "input" ? "cursor-pointer" : "cursor-default"}`}
               />
@@ -160,14 +161,14 @@ export default function VisualMemory() {
               {highlighted.every(c => selected.includes(c)) && selected.every(s => highlighted.includes(s)) ? (
                 <button
                   onClick={handleNext}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
                 >
                   下一关
                 </button>
               ) : (
                 <button
                   onClick={handleStart}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
                 >
                   再试
                 </button>

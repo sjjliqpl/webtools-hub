@@ -56,10 +56,11 @@ export const categoryNames: Record<string, Record<Lang, string>> = {
   math: { zh: '数学转换', en: 'Math & Converters' },
   ui: { zh: 'UI 设计', en: 'UI & Design' },
   time: { zh: '时间效率', en: 'Time & Productivity' },
-  games: { zh: '游戏安全', en: 'Games & Security' },
+  games: { zh: '休闲游戏', en: 'Games' },
   crypto: { zh: '密码安全', en: 'Crypto & Security' },
   iot: { zh: '物联网工具', en: 'IoT Tools' },
-  test: { zh: '能力测试', en: 'Ability Tests' },
+  test: { zh: '训练与测试', en: 'Training & Tests' },
+  web: { zh: '常用工具', en: 'Everyday Tools' },
 }
 
 export const toolTranslations: Record<string, { name: string; description: string }> = {
@@ -150,10 +151,20 @@ export const toolTranslations: Record<string, { name: string; description: strin
   'iot-power': { name: 'IoT Power Calculator', description: 'Estimate IoT device battery life from current profile' },
   'baud-rate': { name: 'Baud Rate Calculator', description: 'Calculate UART/RS-485 serial transmission time' },
 
+  'click-speed': { name: 'Click speed', description: 'Measure clicks per second' },
+  'mouse-tracking': { name: 'Mouse tracking', description: 'Track moving targets and measure accuracy' },
+  'keyboard-reaction': { name: 'Keyboard reaction', description: 'Train key recognition and response speed' },
+  'keyboard-tester': { name: 'Keyboard tester', description: 'Test physical keys and simultaneous input' },
+  'sequence-memory': { name: 'Sequence memory', description: 'Repeat increasingly long flashing sequences' },
+  'stroop-test': { name: 'Stroop test', description: 'Identify ink colors while ignoring word meaning' },
+  'regex-tester': { name: 'Regex tester', description: 'Test patterns with groups and timeout protection' },
+  'url-parser': { name: 'URL parser', description: 'Inspect URL components and query parameters' },
+  'text-diff': { name: 'Text diff', description: 'Compare text with added and removed lines' },
+  'image-compressor': { name: 'Image compressor', description: 'Resize and compress images locally' },
   // Ability Tests
   'visual-memory': { name: 'Visual Memory', description: 'Memorize highlighted grid cells and recreate them' },
-  'number-memory': { name: 'Number Memory', description: 'Memorize increasingly long digit sequences' },
+  'number-memory': { name: 'Number Memory', description: 'Practice 3–10 digits with 50 ms to 3 s exposure' },
   'click-precision': { name: 'Click Precision', description: 'Click shrinking targets to test mouse accuracy' },
-  'color-blind-test': { name: 'Color Blind Test', description: 'Identify hidden numbers in colored-dot patterns' },
+  'color-blind-test': { name: 'Color Recognition Practice', description: 'Identify hidden numbers in colored-dot patterns' },
   'aim-trainer': { name: 'Aim Trainer', description: 'Click appearing targets to test hand-eye coordination' },
 }

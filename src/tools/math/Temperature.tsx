@@ -47,8 +47,7 @@ export default function Temperature() {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-      <h2 className="text-lg font-semibold text-slate-800 mb-5">温度转换</h2>
+    <div className="tool-surface">
       <div className="flex gap-6 items-start">
         <div className="flex-1 space-y-4">
           <div>
@@ -60,7 +59,7 @@ export default function Temperature() {
               value={celsius}
               onChange={(e) => handleCelsius(e.target.value)}
               placeholder="输入摄氏度"
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+              className="w-full rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
             />
           </div>
           <div className="flex items-center justify-center text-slate-400">
@@ -77,7 +76,7 @@ export default function Temperature() {
               value={fahrenheit}
               onChange={(e) => handleFahrenheit(e.target.value)}
               placeholder="输入华氏度"
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+              className="w-full rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
             />
           </div>
           {tempC !== null && (
@@ -98,7 +97,7 @@ export default function Temperature() {
           </div>
           <span className="text-xs text-slate-400">-20°C</span>
           {tempC !== null && (
-            <span className="mt-1 text-sm font-semibold text-indigo-600">{tempC}°C</span>
+            <span className="mt-1 text-sm font-semibold text-blue-600">{tempC}°C</span>
           )}
         </div>
       </div>

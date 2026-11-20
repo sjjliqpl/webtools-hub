@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState } from 'react';
 
 type Unit = 'px' | 'rem' | 'em' | 'vw' | 'vh' | 'pt' | 'pc';
@@ -40,7 +41,7 @@ function convert(value: number, from: Unit, baseFontSize: number, vw: number, vh
 }
 
 const LABEL_CLS = 'text-xs font-medium text-slate-500 mb-1 block';
-const INPUT_CLS = 'w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500';
+const INPUT_CLS = 'w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500';
 
 export default function CssUnitConverter() {
   const [baseFontSize, setBaseFontSize] = useState(16);
@@ -52,16 +53,14 @@ export default function CssUnitConverter() {
 
   const results = convert(inputValue, inputUnit, baseFontSize, viewportW, viewportH);
 
-  const handleCopy = (unit: Unit, value: number) => {
-    navigator.clipboard.writeText(`${value.toFixed(4)}${unit}`);
+  const handleCopy = async (unit: Unit, value: number) => {
+    if (!await copyText(`${value.toFixed(4)}${unit}`)) return;
     setCopiedUnit(unit);
     setTimeout(() => setCopiedUnit(null), 2000);
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-6">
-      <h2 className="text-lg font-semibold text-slate-800">CSS Unit Converter</h2>
-
+    <div className="tool-surface space-y-6">
       {/* Config */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-4 border-b border-slate-100">
         <div>
@@ -99,16 +98,16 @@ export default function CssUnitConverter() {
       {/* Results */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {results.map(({ unit, value }) => (
-          <div key={unit} className="bg-slate-50 rounded-xl p-4 flex flex-col gap-2">
+          <div key={unit} className="bg-slate-50 rounded-md p-4 flex flex-col gap-2">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">{unit}</span>
             <span className="text-base font-mono font-medium text-slate-800 break-all">
               {value.toFixed(4)}
             </span>
             <button
               onClick={() => handleCopy(unit, value)}
-              className="mt-auto text-xs px-2 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors font-medium"
+              className="mt-auto text-xs px-2 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors font-medium"
             >
-              {copiedUnit === unit ? 'Copied!' : 'Copy'}
+              {copiedUnit === unit ? '已复制' : '复制'}
             </button>
           </div>
         ))}

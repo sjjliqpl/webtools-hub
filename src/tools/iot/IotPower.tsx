@@ -54,7 +54,8 @@ export default function IotPower() {
     const sc = parseFloat(sleepCurrent)
     const duty = parseFloat(activeDuty)
     if ([cap, v, ac, sc, duty].some(isNaN) || cap <= 0 || v <= 0 || ac <= 0 || sc < 0 || duty < 0 || duty > 100) return null
-    return calculate(cap, v, ac, sc, duty)
+    const calculated = calculate(cap, v, ac, sc, duty)
+    return Number.isFinite(calculated.batteryLife) ? calculated : null
   })()
 
   const formatHours = (h: number) => {
@@ -64,12 +65,11 @@ export default function IotPower() {
     return `${(h / 24 / 365).toFixed(2)} 年`
   }
 
-  const inputClass = 'w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30'
+  const inputClass = 'w-full rounded-md border border-slate-200 px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30'
 
   return (
     <div className="space-y-4 max-w-2xl mx-auto">
-      <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-800 mb-1">物联网功耗计算器</h2>
+      <div className="tool-surface">
         <p className="text-sm text-slate-500 mb-4">估算 IoT 设备在工作/休眠模式下的电池续航时间</p>
 
         <p className="text-xs font-medium text-slate-500 mb-2">快速预设</p>
@@ -117,7 +117,7 @@ export default function IotPower() {
                 value={activeDuty}
                 onChange={e => setActiveDuty(e.target.value)}
                 min="0" max="100"
-                className="w-20 rounded-xl border border-slate-200 px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+                className="w-20 rounded-md border border-slate-200 px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30"
               />
               <span className="text-sm text-slate-500">%</span>
             </div>
@@ -126,29 +126,29 @@ export default function IotPower() {
       </div>
 
       {result && (
-        <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+        <div className="tool-surface">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-3">估算结果</p>
 
-          <div className="bg-teal-50 rounded-xl px-4 py-4 mb-3 text-center">
+          <div className="bg-teal-50 rounded-md px-4 py-4 mb-3 text-center">
             <p className="text-xs text-teal-600 mb-1">预计电池续航</p>
             <p className="text-2xl font-bold text-teal-700">{formatHours(result.batteryLife)}</p>
             <p className="text-sm text-teal-600 mt-0.5">≈ {result.batteryLifeDays.toFixed(1)} 天</p>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
-            <div className="bg-slate-50 rounded-xl px-4 py-3">
+            <div className="bg-slate-50 rounded-md px-4 py-3">
               <p className="text-xs text-slate-500 mb-0.5">平均工作电流</p>
               <p className="text-sm font-mono font-semibold text-slate-700">{result.avgCurrentMa.toFixed(3)} mA</p>
             </div>
-            <div className="bg-slate-50 rounded-xl px-4 py-3">
+            <div className="bg-slate-50 rounded-md px-4 py-3">
               <p className="text-xs text-slate-500 mb-0.5">平均功耗</p>
               <p className="text-sm font-mono font-semibold text-slate-700">{result.powerMw.toFixed(2)} mW</p>
             </div>
-            <div className="bg-slate-50 rounded-xl px-4 py-3">
+            <div className="bg-slate-50 rounded-md px-4 py-3">
               <p className="text-xs text-slate-500 mb-0.5">充电频率</p>
               <p className="text-sm font-mono font-semibold text-slate-700">{result.batteryLifeDays >= 365 ? `${result.chargeCycles} 年不用充电` : `约每 ${result.batteryLifeDays.toFixed(0)} 天`}</p>
             </div>
-            <div className="bg-slate-50 rounded-xl px-4 py-3">
+            <div className="bg-slate-50 rounded-md px-4 py-3">
               <p className="text-xs text-slate-500 mb-0.5">节能建议</p>
               <p className="text-xs text-slate-600">{parseFloat(activeDuty) > 20 ? '建议降低工作占空比以延长续航' : '占空比已较低，可考虑降低工作电流'}</p>
             </div>

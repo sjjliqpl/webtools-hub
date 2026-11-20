@@ -1,9 +1,10 @@
+import { copyText } from '../../lib/clipboard';
 import { useState } from 'react';
 
 function xorEncrypt(text: string, key: string): string {
   if (!key) return text;
   const keyLen = key.length;
-  return Array.from(text).map((ch, i) => {
+  return text.split('').map((ch, i) => {
     const charCode = ch.charCodeAt(0) ^ key.charCodeAt(i % keyLen);
     return charCode.toString(16).padStart(4, '0');
   }).join(' ');
@@ -12,8 +13,10 @@ function xorEncrypt(text: string, key: string): string {
 function xorDecrypt(hex: string, key: string): string {
   if (!key) return hex;
   try {
+    if (!hex.trim()) return '';
     const keyLen = key.length;
     const parts = hex.trim().split(/\s+/);
+    if (parts.some(part => !/^[0-9a-f]{4}$/i.test(part))) return '解密失败，请输入四位十六进制分组';
     return parts.map((part, i) => {
       const code = parseInt(part, 16) ^ key.charCodeAt(i % keyLen);
       return String.fromCharCode(code);
@@ -33,18 +36,17 @@ export default function XorCipher() {
 
   const handleCopy = async () => {
     if (!output) return;
-    await navigator.clipboard.writeText(output);
+    if (!await copyText(output)) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-1">XOR 异或加密</h2>
+    <div className="tool-surface max-w-lg mx-auto">
       <p className="text-sm text-slate-500 mb-4">使用密钥对文本进行 XOR 位运算加密</p>
 
       {/* Mode Toggle */}
-      <div className="flex rounded-xl border border-slate-200 overflow-hidden mb-4">
+      <div className="flex rounded-md border border-slate-200 overflow-hidden mb-4">
         {(['encrypt', 'decrypt'] as const).map(m => (
           <button
             key={m}
@@ -64,7 +66,7 @@ export default function XorCipher() {
           value={key}
           onChange={e => setKey(e.target.value)}
           placeholder="请输入密钥…"
-          className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30 font-mono"
+          className="w-full rounded-md border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30 font-mono"
         />
       </div>
 
@@ -78,14 +80,14 @@ export default function XorCipher() {
           onChange={e => setInput(e.target.value)}
           placeholder={mode === 'encrypt' ? '请输入要加密的文本…' : '请输入加密后的十六进制字符串…'}
           rows={3}
-          className="w-full rounded-xl border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30 font-mono resize-y"
+          className="w-full rounded-md border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30 font-mono resize-y"
         />
       </div>
 
       {/* Output */}
       <div className="relative mb-3">
         <label className="block text-sm text-slate-600 mb-1">结果</label>
-        <div className="rounded-xl border border-slate-200 p-4 text-sm font-mono bg-slate-50 break-all min-h-[72px] text-slate-700 pr-20 leading-relaxed">
+        <div className="rounded-md border border-slate-200 p-4 text-sm font-mono bg-slate-50 break-all min-h-[72px] text-slate-700 pr-20 leading-relaxed">
           {output || <span className="text-slate-300">结果将显示在此…</span>}
         </div>
         <button

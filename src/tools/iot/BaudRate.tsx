@@ -63,13 +63,13 @@ export default function BaudRate() {
   const [stopBits, setStopBits] = useState<StopKey>('1')
   const [payloadBytes, setPayloadBytes] = useState('10')
 
-  const baud = parseInt(baudInput) || 0
+  const baud = Number(baudInput)
   const parityBits = PARITY.find(p => p.key === parity)!.bits
   const stopBitsNum = parseFloat(stopBits)
 
-  const result = baud > 0 ? calculateSerialParams(baud, dataBits, parityBits, stopBitsNum) : null
+  const result = Number.isSafeInteger(baud) && baud > 0 ? calculateSerialParams(baud, dataBits, parityBits, stopBitsNum) : null
 
-  const payloadNum = parseInt(payloadBytes) || 0
+  const payloadNum = Math.max(0, Math.floor(Number(payloadBytes)) || 0)
   const transmitTimeMicros = result ? result.timePerByteMicros * payloadNum : 0
 
   const formatTime = (us: number) => {
@@ -80,8 +80,7 @@ export default function BaudRate() {
 
   return (
     <div className="space-y-4 max-w-2xl mx-auto">
-      <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-800 mb-1">串口波特率计算器</h2>
+      <div className="tool-surface">
         <p className="text-sm text-slate-500 mb-4">计算串行通信（UART/RS-232/RS-485）参数与数据传输时间</p>
 
         {/* Preset Scenarios */}
@@ -123,7 +122,7 @@ export default function BaudRate() {
             onChange={e => setBaudInput(e.target.value)}
             min="1"
             placeholder="自定义波特率"
-            className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+            className="w-full rounded-md border border-slate-200 px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30"
           />
         </div>
 
@@ -162,7 +161,7 @@ export default function BaudRate() {
             <select
               value={parity}
               onChange={e => setParity(e.target.value as ParityKey)}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+              className="w-full rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/30"
             >
               {PARITY.map(p => (
                 <option key={p.key} value={p.key}>{p.label}</option>
@@ -178,19 +177,19 @@ export default function BaudRate() {
             value={payloadBytes}
             onChange={e => setPayloadBytes(e.target.value)}
             min="1"
-            className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+            className="w-full rounded-md border border-slate-200 px-3 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30"
           />
         </div>
       </div>
 
       {result && (
-        <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+        <div className="tool-surface">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-3">计算结果</p>
 
           {/* Frame visualization */}
-          <div className="mb-4 p-3 bg-slate-50 rounded-xl">
+          <div className="mb-4 p-3 bg-slate-50 rounded-md">
             <p className="text-xs text-slate-500 mb-2">帧格式（1 帧 = {result.frameSize} 位）</p>
-            <div className="flex gap-1 text-[10px] font-mono">
+            <div className="flex flex-wrap gap-1 text-[10px] font-mono">
               <div className="bg-amber-100 text-amber-700 rounded px-2 py-1">START(1)</div>
               <div className="bg-teal-100 text-teal-700 rounded px-2 py-1">DATA({dataBits})</div>
               {parityBits > 0 && <div className="bg-blue-100 text-blue-700 rounded px-2 py-1">PARITY(1)</div>}
@@ -199,28 +198,28 @@ export default function BaudRate() {
           </div>
 
           <div className="grid grid-cols-2 gap-2 mb-3">
-            <div className="bg-teal-50 rounded-xl px-4 py-3">
+            <div className="bg-teal-50 rounded-md px-4 py-3">
               <p className="text-xs text-teal-600 mb-0.5">有效字节率</p>
               <p className="text-base font-mono font-bold text-teal-700">{result.bytesPerSecond.toFixed(1)} B/s</p>
             </div>
-            <div className="bg-slate-50 rounded-xl px-4 py-3">
+            <div className="bg-slate-50 rounded-md px-4 py-3">
               <p className="text-xs text-slate-500 mb-0.5">每字节传输时间</p>
               <p className="text-base font-mono font-semibold text-slate-700">{formatTime(result.timePerByteMicros)}</p>
             </div>
-            <div className="bg-slate-50 rounded-xl px-4 py-3">
+            <div className="bg-slate-50 rounded-md px-4 py-3">
               <p className="text-xs text-slate-500 mb-0.5">有效载荷效率</p>
               <p className="text-base font-mono font-semibold text-slate-700">{result.payloadEfficiency.toFixed(1)}%</p>
             </div>
-            <div className="bg-slate-50 rounded-xl px-4 py-3">
+            <div className="bg-slate-50 rounded-md px-4 py-3">
               <p className="text-xs text-slate-500 mb-0.5">每秒帧数</p>
               <p className="text-base font-mono font-semibold text-slate-700">{result.framesPerSecond.toFixed(0)} fps</p>
             </div>
           </div>
 
           {payloadNum > 0 && (
-            <div className="bg-indigo-50 rounded-xl px-4 py-3">
-              <p className="text-xs text-indigo-600 mb-0.5">传输 {payloadNum} 字节所需时间</p>
-              <p className="text-lg font-mono font-bold text-indigo-700">{formatTime(transmitTimeMicros)}</p>
+            <div className="bg-blue-50 rounded-md px-4 py-3">
+              <p className="text-xs text-blue-600 mb-0.5">传输 {payloadNum} 字节所需时间</p>
+              <p className="text-lg font-mono font-bold text-blue-700">{formatTime(transmitTimeMicros)}</p>
             </div>
           )}
         </div>

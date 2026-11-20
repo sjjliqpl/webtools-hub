@@ -1,133 +1,25 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-
-const WORK_SECONDS = 25 * 60;
-const BREAK_SECONDS = 5 * 60;
-const RADIUS = 90;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-
+import { useEffect,useRef,useState } from 'react'
 export default function Pomodoro() {
-  const [mode, setMode] = useState<"work" | "break">("work");
-  const [remaining, setRemaining] = useState(WORK_SECONDS);
-  const [running, setRunning] = useState(false);
-  const [sessions, setSessions] = useState(0);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const total = mode === "work" ? WORK_SECONDS : BREAK_SECONDS;
-  const progress = remaining / total;
-  const offset = CIRCUMFERENCE * (1 - progress);
-
-  const clear = useCallback(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  }, []);
-
-  const switchMode = useCallback(() => {
-    setMode((prev) => {
-      const next = prev === "work" ? "break" : "work";
-      setRemaining(next === "work" ? WORK_SECONDS : BREAK_SECONDS);
-      if (prev === "work") setSessions((s) => s + 1);
-      return next;
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!running) return;
-    clear();
-    intervalRef.current = setInterval(() => {
-      setRemaining((prev) => {
-        if (prev <= 1) {
-          switchMode();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return clear;
-  }, [running, mode, clear, switchMode]);
-
-  const toggle = () => setRunning((v) => !v);
-
-  const reset = () => {
-    clear();
-    setRunning(false);
-    setMode("work");
-    setRemaining(WORK_SECONDS);
-  };
-
-  const pad = (n: number) => String(n).padStart(2, "0");
-  const mm = pad(Math.floor(remaining / 60));
-  const ss = pad(remaining % 60);
-
-  const color = mode === "work" ? "#4f46e5" : "#10b981";
-  const bgColor = mode === "work" ? "bg-indigo-50" : "bg-emerald-50";
-  const label = mode === "work" ? "工作" : "休息";
-
-  return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col items-center gap-5">
-      {/* Mode label */}
-      <span
-        className={`px-3 py-1 rounded-full text-sm font-medium ${
-          mode === "work"
-            ? "bg-indigo-100 text-indigo-700"
-            : "bg-emerald-100 text-emerald-700"
-        }`}
-      >
-        {label}
-      </span>
-
-      {/* Circular progress */}
-      <div className={`relative flex items-center justify-center rounded-full ${bgColor}`}>
-        <svg width="220" height="220" className="-rotate-90">
-          <circle
-            cx="110"
-            cy="110"
-            r={RADIUS}
-            fill="none"
-            stroke="#e2e8f0"
-            strokeWidth="8"
-          />
-          <circle
-            cx="110"
-            cy="110"
-            r={RADIUS}
-            fill="none"
-            stroke={color}
-            strokeWidth="8"
-            strokeLinecap="round"
-            strokeDasharray={CIRCUMFERENCE}
-            style={{ strokeDashoffset: offset }}
-            className="transition-all duration-500"
-          />
-        </svg>
-        <div className="absolute flex flex-col items-center">
-          <span className="text-5xl font-mono font-bold tracking-wider text-slate-900">
-            {mm}:{ss}
-          </span>
-        </div>
-      </div>
-
-      {/* Session count */}
-      <span className="text-sm text-slate-500">
-        已完成 <span className="font-semibold text-slate-700">{sessions}</span> 个番茄
-      </span>
-
-      {/* Buttons */}
-      <div className="flex gap-3">
-        <button
-          onClick={toggle}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
-        >
-          {running ? "暂停" : "开始"}
-        </button>
-        <button
-          onClick={reset}
-          className="px-4 py-2 bg-slate-200 text-slate-700 rounded-xl text-sm font-medium hover:bg-slate-300 transition-colors"
-        >
-          重置
-        </button>
-      </div>
-    </div>
-  );
+  const [mode,setMode]=useState<'work'|'break'>('work')
+  const [work,setWork]=useState(25),[rest,setRest]=useState(5)
+  const [remaining,setRemaining]=useState(25*60000),[running,setRunning]=useState(false),[sessions,setSessions]=useState(0)
+  const deadline=useRef(0),latest=useRef(25*60000)
+  const total=(mode==='work' ? work : rest)*60000
+  useEffect(()=>{
+    if(!running)return
+    const timer=setInterval(()=>{
+      const left=Math.max(0,deadline.current-Date.now());latest.current=left;setRemaining(left)
+      if(!left){
+        if(mode==='work')setSessions(prev=>prev+1)
+        const next=mode==='work' ? 'break' : 'work',duration=(next==='work' ? work : rest)*60000
+        setMode(next);latest.current=duration;setRemaining(duration);deadline.current=Date.now()+duration
+      }
+    },200)
+    return()=>clearInterval(timer)
+  },[running,mode,work,rest])
+  function toggle(){if(running){latest.current=Math.max(0,deadline.current-Date.now());setRemaining(latest.current);setRunning(false)}else{deadline.current=Date.now()+latest.current;setRunning(true)}}
+  function reset(){setRunning(false);setMode('work');latest.current=work*60000;setRemaining(work*60000)}
+  function change(value:number,kind:'work'|'break'){const valid=Math.max(1,Math.min(kind==='work' ? 120 : 60,Math.floor(value)||1));if(kind==='work')setWork(valid);else setRest(valid);setRunning(false);setMode('work');latest.current=(kind==='work' ? valid : work)*60000;setRemaining(latest.current)}
+  const seconds=Math.ceil(remaining/1000),percent=Math.max(0,Math.min(100,remaining/total*100))
+  return <div className="tool-surface" style={{maxWidth:700,margin:'0 auto'}}><div className="utility-grid"><label><span className="field-label">专注时长（分钟）</span><input className="utility-field" type="number" min={1} max={120} value={work} disabled={running} onChange={event=>change(Number(event.target.value),'work')} /></label><label><span className="field-label">休息时长（分钟）</span><input className="utility-field" type="number" min={1} max={60} value={rest} disabled={running} onChange={event=>change(Number(event.target.value),'break')} /></label></div><div className="training-stage" style={{marginTop:20}}><p role="status">{mode==='work' ? '专注时间' : '休息时间'}</p><div style={{width:220,height:220,borderRadius:'50%',background:`conic-gradient(${mode==='work' ? 'var(--primary)' : '#16a34a'} ${percent}%,var(--border) 0)`,padding:7}}><div style={{width:'100%',height:'100%',borderRadius:'50%',background:'var(--surface)',display:'grid',placeItems:'center'}}><strong style={{font:'600 42px var(--font-mono)'}}>{String(Math.floor(seconds/60)).padStart(2,'0')}:{String(seconds%60).padStart(2,'0')}</strong></div></div><p>已完成 {sessions} 个专注时段</p></div><div className="training-actions"><button className="primary-button" onClick={toggle}>{running ? '暂停' : '开始'}</button><button className="secondary-button" onClick={reset}>重置计时</button><button className="secondary-button" onClick={()=>{setRunning(false);const next=mode==='work' ? 'break' : 'work';setMode(next);latest.current=(next==='work' ? work : rest)*60000;setRemaining(latest.current)}}>切换到{mode==='work' ? '休息' : '专注'}</button></div></div>
 }

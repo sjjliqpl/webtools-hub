@@ -9,9 +9,12 @@ function toBin(n: number, pad = 8) {
 }
 
 function parseInput(input: string, base: 'hex' | 'dec' | 'bin'): number[] | null {
-  const parts = input.trim().split(/[\s,]+/).filter(Boolean)
+  const clean = input.trim().replace(/^0x/i, '')
+  const parts = base === 'hex' && /^[0-9a-f]+$/i.test(clean) && clean.length > 2 && clean.length % 2 === 0 ? clean.match(/.{2}/g)! : input.trim().split(/[\s,]+/).filter(Boolean)
   const bytes: number[] = []
   for (const p of parts) {
+    const token = p.replace(base === 'hex' ? /^0x/i : base === 'bin' ? /^0b/i : /^$/, '')
+    if (!(base === 'hex' ? /^[0-9a-f]{1,2}$/i : base === 'bin' ? /^[01]{1,8}$/ : /^\d{1,3}$/).test(token)) return null
     let val: number
     if (base === 'hex') val = parseInt(p.replace(/^0x/i, ''), 16)
     else if (base === 'bin') val = parseInt(p.replace(/^0b/i, ''), 2)
@@ -53,8 +56,7 @@ export default function HexConverter() {
 
   return (
     <div className="space-y-4 max-w-2xl mx-auto">
-      <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-800 mb-1">字节与进制转换器</h2>
+      <div className="tool-surface">
         <p className="text-sm text-slate-500 mb-4">在十六进制、十进制、二进制和 ASCII 文本之间互相转换</p>
 
         <div className="flex flex-wrap gap-2 mb-3">
@@ -74,17 +76,17 @@ export default function HexConverter() {
           onChange={e => setInput(e.target.value)}
           placeholder={current.placeholder}
           rows={3}
-          className="w-full rounded-xl border border-slate-200 p-4 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30 resize-y"
+          className="w-full rounded-md border border-slate-200 p-4 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30 resize-y"
         />
         {error && (
-          <div className="mt-2 text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2">{error}</div>
+          <div className="mt-2 text-sm text-red-600 bg-red-50 rounded-md px-4 py-2">{error}</div>
         )}
       </div>
 
       {bytes && bytes.length > 0 && (
         <div className="space-y-4">
           {/* Byte Table */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+          <div className="tool-surface">
             <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-3">字节详情（共 {bytes.length} 字节）</p>
             <div className="overflow-x-auto">
               <table className="text-xs font-mono w-full">
@@ -113,7 +115,7 @@ export default function HexConverter() {
           </div>
 
           {/* Summary */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+          <div className="bg-white rounded-lg p-5 border border-slate-100 shadow-sm">
             <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-3">汇总输出</p>
             <div className="space-y-2">
               {[
@@ -123,7 +125,7 @@ export default function HexConverter() {
                 { label: 'C 字节数组', value: `{${bytes.map(b => '0x' + toHex(b)).join(', ')}}` },
                 { label: 'ASCII 文本', value: bytes.map(b => b >= 32 && b < 127 ? String.fromCharCode(b) : '.').join('') },
               ].map(row => (
-                <div key={row.label} className="bg-slate-50 rounded-xl px-4 py-2.5">
+                <div key={row.label} className="bg-slate-50 rounded-md px-4 py-2.5">
                   <span className="text-xs text-slate-400 block mb-0.5">{row.label}</span>
                   <span className="text-xs font-mono text-slate-700 break-all">{row.value}</span>
                 </div>

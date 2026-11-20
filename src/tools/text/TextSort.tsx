@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState } from 'react';
 
 type SortMode = 'asc' | 'desc' | 'length' | 'numeric';
@@ -25,8 +26,9 @@ export default function TextSort() {
         break;
       case 'numeric':
         sorted = [...lines].sort((a, b) => {
-          const na = parseFloat(a) || 0;
-          const nb = parseFloat(b) || 0;
+          const na = Number(a), nb = Number(b);
+          if (!Number.isFinite(na)) return Number.isFinite(nb) ? 1 : a.localeCompare(b);
+          if (!Number.isFinite(nb)) return -1;
           return na - nb;
         });
         break;
@@ -36,7 +38,7 @@ export default function TextSort() {
   };
 
   const copy = async () => {
-    await navigator.clipboard.writeText(output);
+    if (!await copyText(output)) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -49,17 +51,15 @@ export default function TextSort() {
   ];
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">文本排序</h2>
-
+    <div className="tool-surface">
       <div className="flex flex-wrap items-center gap-2 mb-4">
         {modes.map((m) => (
           <button
             key={m.key}
             onClick={() => sort(m.key)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
               activeMode === m.key
-                ? 'bg-indigo-600 text-white'
+                ? 'bg-blue-600 text-white'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
@@ -75,7 +75,7 @@ export default function TextSort() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             rows={14}
-            className="w-full rounded-xl border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 font-mono resize-none"
+            className="w-full rounded-md border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 font-mono resize-none"
             placeholder="每行输入一条内容..."
           />
         </div>
@@ -95,7 +95,7 @@ export default function TextSort() {
             value={output}
             readOnly
             rows={14}
-            className="w-full rounded-xl border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 font-mono bg-slate-50 resize-none"
+            className="w-full rounded-md border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 font-mono bg-slate-50 resize-none"
             placeholder="排序结果..."
           />
         </div>

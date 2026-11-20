@@ -11,17 +11,12 @@ export default function QRCode() {
   const linkRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
-    if (!text.trim()) {
-      setDataUrl("");
-      return;
-    }
-    QRCodeLib.toDataURL(text, {
-      width: size,
-      margin: 2,
-      errorCorrectionLevel: errorLevel,
-    })
-      .then(setDataUrl)
-      .catch(() => setDataUrl(""));
+    if (!text.trim()) return;
+    let cancelled = false;
+    QRCodeLib.toDataURL(text, { width: size, margin: 2, errorCorrectionLevel: errorLevel })
+      .then(value => { if (!cancelled) setDataUrl(value); })
+      .catch(() => { if (!cancelled) setDataUrl(""); });
+    return () => { cancelled = true; };
   }, [text, size, errorLevel]);
 
   const download = () => {
@@ -32,15 +27,13 @@ export default function QRCode() {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-md mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">QR 码生成器</h2>
-
+    <div className="tool-surface max-w-md mx-auto">
       <input
         type="text"
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => { setText(e.target.value); setDataUrl(""); }}
         placeholder="输入文本或 URL"
-        className="w-full px-4 py-2 border border-slate-200 rounded-xl text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="w-full px-4 py-2 border border-slate-200 rounded-md text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
 
       <div className="flex gap-3 mb-4">
@@ -48,8 +41,8 @@ export default function QRCode() {
           <label className="block text-xs text-slate-500 mb-1">尺寸</label>
           <select
             value={size}
-            onChange={(e) => setSize(Number(e.target.value))}
-            className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            onChange={(e) => { setSize(Number(e.target.value)); setDataUrl(""); }}
+            className="w-full px-3 py-2 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value={128}>128 px</option>
             <option value={256}>256 px</option>
@@ -60,8 +53,8 @@ export default function QRCode() {
           <label className="block text-xs text-slate-500 mb-1">纠错等级</label>
           <select
             value={errorLevel}
-            onChange={(e) => setErrorLevel(e.target.value as ErrorLevel)}
-            className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            onChange={(e) => { setErrorLevel(e.target.value as ErrorLevel); setDataUrl(""); }}
+            className="w-full px-3 py-2 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="L">L (低)</option>
             <option value="M">M (中)</option>
@@ -71,9 +64,9 @@ export default function QRCode() {
         </div>
       </div>
 
-      <div className="flex justify-center mb-4 p-4 bg-slate-50 rounded-xl min-h-[160px] items-center">
+      <div className="flex justify-center mb-4 p-4 bg-slate-50 rounded-md min-h-[160px] items-center">
         {dataUrl ? (
-          <img src={dataUrl} alt="QR Code" style={{ width: size, height: size, maxWidth: "100%" }} />
+          <img src={dataUrl} alt="QR Code" style={{ width: size, height: "auto", maxWidth: "100%" }} />
         ) : (
           <span className="text-slate-400 text-sm">请输入内容以生成二维码</span>
         )}
@@ -83,7 +76,7 @@ export default function QRCode() {
       <button
         onClick={download}
         disabled={!dataUrl}
-        className="w-full px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         下载 PNG
       </button>

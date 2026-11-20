@@ -1,53 +1,33 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { Lang } from '../i18n/translations'
+import { AppContext } from './useApp'
+import { readStored, saveStored } from '../lib/storage'
 
-type Theme = 'light' | 'dark'
-
-interface AppContextValue {
-  lang: Lang
-  setLang: (l: Lang) => void
-  theme: Theme
-  toggleTheme: () => void
+function preference(key: string, allowed: string[], fallback: string) {
+  try { const value = localStorage.getItem(key); return value && allowed.includes(value) ? value : fallback } catch { return fallback }
 }
-
-const AppContext = createContext<AppContextValue>({
-  lang: 'zh',
-  setLang: () => {},
-  theme: 'light',
-  toggleTheme: () => {},
-})
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(() =>
-    (localStorage.getItem('webtools-lang') as Lang) || 'zh'
-  )
-  const [theme, setTheme] = useState<Theme>(() =>
-    (localStorage.getItem('webtools-theme') as Theme) || 'light'
-  )
+  const [lang, setLang] = useState<Lang>(() => preference('webtools-lang', ['zh', 'en'], 'zh') as Lang)
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => preference('webtools-theme', ['light', 'dark'], 'light') as 'light' | 'dark')
+  const [favorites, setFavorites] = useState<string[]>(() => readStored('webtools-favorites', []))
+  const [recent, setRecent] = useState<string[]>(() => readStored('webtools-recent', []))
 
   useEffect(() => {
-    const root = document.documentElement
-    if (theme === 'dark') {
-      root.classList.add('dark')
-    } else {
-      root.classList.remove('dark')
-    }
-    localStorage.setItem('webtools-theme', theme)
+    document.documentElement.classList.toggle('dark', theme === 'dark')
+    document.documentElement.style.colorScheme = theme
+    try { localStorage.setItem('webtools-theme', theme) } catch { /* Session preference still applies. */ }
   }, [theme])
-
   useEffect(() => {
-    localStorage.setItem('webtools-lang', lang)
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en'
+    try { localStorage.setItem('webtools-lang', lang) } catch { /* Session preference still applies. */ }
   }, [lang])
+  useEffect(() => saveStored('webtools-favorites', favorites), [favorites])
+  useEffect(() => saveStored('webtools-recent', recent), [recent])
+  const toggleFavorite = useCallback((id: string) => setFavorites(prev => prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]), [])
+  const recordVisit = useCallback((id: string) => setRecent(prev => [id, ...prev.filter(item => item !== id)].slice(0, 12)), [])
+  const toggleTheme = useCallback(() => setTheme(prev => prev === 'light' ? 'dark' : 'light'), [])
 
-  const setLang = (l: Lang) => setLangState(l)
-  const toggleTheme = () => setTheme(t => t === 'light' ? 'dark' : 'light')
-
-  return (
-    <AppContext.Provider value={{ lang, setLang, theme, toggleTheme }}>
-      {children}
-    </AppContext.Provider>
-  )
+  return <AppContext.Provider value={{ lang, setLang, theme, toggleTheme, favorites, toggleFavorite, recent, recordVisit }}>{children}</AppContext.Provider>
 }
-
-export const useApp = () => useContext(AppContext)

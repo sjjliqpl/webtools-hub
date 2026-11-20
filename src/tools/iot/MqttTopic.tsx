@@ -85,8 +85,7 @@ export default function MqttTopic() {
 
   return (
     <div className="space-y-4 max-w-2xl mx-auto">
-      <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-800 mb-1">MQTT 主题验证器</h2>
+      <div className="tool-surface">
         <p className="text-sm text-slate-500 mb-4">验证 MQTT 主题格式，解析主题层级与通配符</p>
 
         <div className="flex items-center gap-3 mb-3">
@@ -110,7 +109,7 @@ export default function MqttTopic() {
           value={topic}
           onChange={e => setTopic(e.target.value)}
           placeholder="输入 MQTT 主题，如 home/room/sensor"
-          className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30 mb-3"
+          className="w-full rounded-md border border-slate-200 px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30 mb-3"
         />
 
         <div className="flex flex-wrap gap-2">
@@ -127,8 +126,8 @@ export default function MqttTopic() {
       </div>
 
       {analysis && (
-        <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-          <div className={`flex items-center gap-2 mb-4 px-4 py-2.5 rounded-xl text-sm font-medium ${analysis.valid ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
+        <div className="tool-surface">
+          <div className={`flex items-center gap-2 mb-4 px-4 py-2.5 rounded-md text-sm font-medium ${analysis.valid ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
             <span>{analysis.valid ? '✅' : '❌'}</span>
             <span>{analysis.valid ? '主题格式有效' : '主题格式无效'}</span>
           </div>
@@ -162,13 +161,13 @@ export default function MqttTopic() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-slate-50 rounded-xl p-3">
+            <div className="bg-slate-50 rounded-md p-3">
               <p className="text-xs text-slate-500 mb-1">通配符</p>
               <p className="text-sm font-medium text-slate-700">
                 {analysis.hasWildcard ? analysis.wildcardPosition : '无通配符'}
               </p>
             </div>
-            <div className="bg-slate-50 rounded-xl p-3">
+            <div className="bg-slate-50 rounded-md p-3">
               <p className="text-xs text-slate-500 mb-1">系统主题</p>
               <p className="text-sm font-medium text-slate-700">
                 {topic.startsWith('$') ? '是 ($SYS 等)' : '否'}
@@ -178,7 +177,7 @@ export default function MqttTopic() {
         </div>
       )}
 
-      <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+      <div className="bg-slate-50 rounded-lg p-4 border border-slate-100">
         <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">通配符说明</p>
         <div className="space-y-1.5 text-xs text-slate-600">
           <div className="flex gap-2"><span className="font-mono bg-blue-100 text-blue-700 px-1.5 rounded">+</span><span>单级通配符，匹配单个层级，如 <code className="font-mono">sensors/+/temp</code></span></div>

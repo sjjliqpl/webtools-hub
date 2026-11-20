@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState, useCallback } from "react";
 
 interface RGB { r: number; g: number; b: number }
@@ -82,22 +83,20 @@ export default function ColorConverter() {
     setHexInput(rgbToHex(newRgb));
   }, [hsl]);
 
-  const copy = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
+  const copy = async (text: string, label: string) => {
+    if (!await copyText(text)) return;
     setCopied(label);
     setTimeout(() => setCopied(""), 1500);
   };
 
-  const inputClass = "rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 w-full";
-  const copyBtn = "px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors";
+  const inputClass = "rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 w-full";
+  const copyBtn = "px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors";
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-      <h2 className="text-lg font-semibold text-slate-800 mb-6">颜色格式转换器</h2>
-
+    <div className="tool-surface">
       <div className="flex flex-col sm:flex-row gap-6">
         <div
-          className="w-full sm:w-40 h-40 rounded-2xl border border-slate-200 shrink-0"
+          className="w-full sm:w-40 h-40 rounded-lg border border-slate-200 shrink-0"
           style={{ backgroundColor: hex }}
         />
 

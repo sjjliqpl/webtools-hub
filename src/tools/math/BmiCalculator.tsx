@@ -23,9 +23,7 @@ export default function BmiCalculator() {
   const barPercent = bmi ? Math.min((bmi / 40) * 100, 100) : 0;
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">BMI 计算器</h2>
-
+    <div className="tool-surface">
       <div className="space-y-3 mb-4">
         <div>
           <label className="block text-sm text-slate-600 mb-1">身高 (cm)</label>
@@ -34,7 +32,7 @@ export default function BmiCalculator() {
             value={height}
             onChange={(e) => setHeight(e.target.value)}
             placeholder="请输入身高"
-            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+            className="w-full rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
           />
         </div>
         <div>
@@ -44,21 +42,21 @@ export default function BmiCalculator() {
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
             placeholder="请输入体重"
-            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+            className="w-full rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
           />
         </div>
       </div>
 
       <button
         onClick={calculate}
-        className="w-full px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+        className="w-full px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
       >
         计算 BMI
       </button>
 
       {bmi !== null && (
         <div className="mt-5 space-y-4">
-          <div className="bg-indigo-50 rounded-xl p-4 text-center">
+          <div className="bg-blue-50 rounded-md p-4 text-center">
             <p className="text-sm text-slate-500 mb-1">你的 BMI</p>
             <p className="text-3xl font-bold text-slate-800">{bmi}</p>
             <p className={`text-sm font-medium mt-1 ${getStatus(bmi).color}`}>

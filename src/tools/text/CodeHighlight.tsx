@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState, useMemo } from 'react';
 import * as Prism from 'prismjs';
 import 'prismjs/components/prism-javascript';
@@ -35,20 +36,18 @@ export default function CodeHighlight() {
   }, [code, language]);
 
   const copy = async () => {
-    await navigator.clipboard.writeText(code);
+    if (!await copyText(code)) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">代码高亮</h2>
-
+    <div className="tool-surface">
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
-          className="rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+          className="rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
         >
           {LANGUAGES.map((l) => (
             <option key={l.value} value={l.value}>
@@ -58,7 +57,7 @@ export default function CodeHighlight() {
         </select>
         <button
           onClick={copy}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+          className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
         >
           {copied ? '已复制 ✓' : '复制代码'}
         </button>
@@ -71,13 +70,13 @@ export default function CodeHighlight() {
             value={code}
             onChange={(e) => setCode(e.target.value)}
             rows={16}
-            className="w-full rounded-xl border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 font-mono resize-none"
+            className="w-full rounded-md border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 font-mono resize-none"
             placeholder="输入代码..."
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-600 mb-1">高亮预览</label>
-          <pre className="rounded-xl border border-slate-200 p-4 text-sm font-mono bg-slate-900 text-slate-100 overflow-auto code-highlight-preview"
+          <pre className="rounded-md border border-slate-200 p-4 text-sm font-mono bg-slate-900 text-slate-100 overflow-auto code-highlight-preview"
                style={{ minHeight: '22rem' }}>
             <code dangerouslySetInnerHTML={{ __html: highlighted }} />
           </pre>

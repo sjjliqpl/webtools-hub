@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 interface SoundOption {
   id: string;
@@ -7,11 +7,11 @@ interface SoundOption {
 }
 
 const SOUNDS: SoundOption[] = [
-  { id: 'rain', label: 'Rain', icon: '🌧️' },
-  { id: 'forest', label: 'Forest', icon: '🌲' },
-  { id: 'fire', label: 'Fire', icon: '🔥' },
-  { id: 'ocean', label: 'Ocean', icon: '🌊' },
-  { id: 'night', label: 'Night', icon: '🦗' },
+  { id: 'rain', label: '雨声', icon: '🌧️' },
+  { id: 'forest', label: '森林', icon: '🌲' },
+  { id: 'fire', label: '炉火', icon: '🔥' },
+  { id: 'ocean', label: '海浪', icon: '🌊' },
+  { id: 'night', label: '夜晚', icon: '🦗' },
 ];
 
 interface ActiveSound {
@@ -144,6 +144,14 @@ export default function WhiteNoise() {
   const ctxRef = useRef<AudioContext | null>(null);
   const activeSounds = useRef<Map<string, ActiveSound>>(new Map());
 
+  useEffect(() => {
+    const sounds = activeSounds.current;
+    return () => {
+      sounds.forEach(sound => { sound.source.stop(); sound.extras.forEach(node => { if ('stop' in node) node.stop(); }); sound.gain.disconnect(); });
+      sounds.clear(); void ctxRef.current?.close();
+    };
+  }, []);
+
   const getCtx = useCallback(() => {
     if (!ctxRef.current) ctxRef.current = new AudioContext();
     return ctxRef.current;
@@ -167,6 +175,7 @@ export default function WhiteNoise() {
       });
     } else {
       const ctx = getCtx();
+      void ctx.resume();
       const sound = createNoise(ctx, id, volume);
       activeSounds.current.set(id, sound);
       setPlaying((prev) => new Set(prev).add(id));
@@ -175,32 +184,30 @@ export default function WhiteNoise() {
 
   const handleVolume = (v: number) => {
     setVolume(v);
-    activeSounds.current.forEach((sound) => {
-      sound.gain.gain.value = v;
+    activeSounds.current.forEach((sound, id) => {
+      sound.gain.gain.value = v * (id === 'forest' ? 0.3 : id === 'night' ? 0.5 : 1);
     });
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-6">
-      <h2 className="text-lg font-semibold text-slate-800">🎵 White Noise</h2>
-
-      <div className="grid grid-cols-5 gap-3">
+    <div className="tool-surface space-y-6">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         {SOUNDS.map((s) => {
           const active = playing.has(s.id);
           return (
             <button
               key={s.id}
               onClick={() => toggle(s.id)}
-              className={`flex flex-col items-center gap-2 rounded-xl p-4 transition-all cursor-pointer ${
+              className={`flex flex-col items-center gap-2 rounded-md p-4 transition-all cursor-pointer ${
                 active
-                  ? 'bg-indigo-100 shadow-[0_0_15px_rgba(99,102,241,0.4)] scale-105'
-                  : 'bg-gradient-to-br from-indigo-50 to-purple-50 hover:scale-105'
+                  ? 'bg-blue-100 shadow-[0_0_15px_rgba(99,102,241,0.4)] scale-105'
+                  : 'bg-gradient-to-br from-blue-50 to-purple-50 hover:scale-105'
               }`}
             >
               <span className={`text-3xl ${active ? 'animate-pulse' : ''}`}>{s.icon}</span>
               <span className="text-xs font-medium text-slate-700">{s.label}</span>
               {active && (
-                <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
               )}
             </button>
           );
@@ -216,7 +223,7 @@ export default function WhiteNoise() {
           step={0.01}
           value={volume}
           onChange={(e) => handleVolume(Number(e.target.value))}
-          className="flex-1 accent-indigo-600"
+          className="flex-1 accent-blue-600"
         />
         <span className="text-sm text-slate-500">🔊</span>
       </div>

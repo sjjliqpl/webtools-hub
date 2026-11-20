@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState } from "react";
 
 export default function ShadowGenerator() {
@@ -20,8 +21,8 @@ export default function ShadowGenerator() {
   const shadowValue = `${inset ? "inset " : ""}${offsetX}px ${offsetY}px ${blur}px ${spread}px ${hexToRgba(color, opacity)}`;
   const cssCode = `box-shadow: ${shadowValue};`;
 
-  const copy = () => {
-    navigator.clipboard.writeText(cssCode);
+  const copy = async () => {
+    if (!await copyText(cssCode)) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -34,14 +35,12 @@ export default function ShadowGenerator() {
   ];
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-      <h2 className="text-lg font-semibold text-slate-800 mb-6">Box Shadow 生成器</h2>
-
+    <div className="tool-surface">
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Preview */}
-        <div className="flex-1 flex items-center justify-center min-h-[280px] bg-slate-50 rounded-2xl">
+        <div className="flex-1 flex items-center justify-center min-h-[280px] bg-slate-50 rounded-lg">
           <div
-            className="w-40 h-40 bg-white rounded-2xl transition-shadow duration-200"
+            className="w-40 h-40 bg-white rounded-lg transition-shadow duration-200"
             style={{ boxShadow: shadowValue }}
           />
         </div>
@@ -60,7 +59,7 @@ export default function ShadowGenerator() {
                 max={s.max}
                 value={s.value}
                 onChange={(e) => s.set(Number(e.target.value))}
-                className="w-full accent-indigo-600"
+                className="w-full accent-blue-600"
               />
             </div>
           ))}
@@ -78,7 +77,7 @@ export default function ShadowGenerator() {
               step={0.01}
               value={opacity}
               onChange={(e) => setOpacity(Number(e.target.value))}
-              className="w-full accent-indigo-600"
+              className="w-full accent-blue-600"
             />
           </div>
 
@@ -98,7 +97,7 @@ export default function ShadowGenerator() {
                 type="checkbox"
                 checked={inset}
                 onChange={(e) => setInset(e.target.checked)}
-                className="w-4 h-4 accent-indigo-600 rounded"
+                className="w-4 h-4 accent-blue-600 rounded"
               />
               Inset
             </label>
@@ -110,11 +109,11 @@ export default function ShadowGenerator() {
       <div className="mt-6">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-slate-600">CSS 代码</span>
-          <button onClick={copy} className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors">
+          <button onClick={copy} className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
             {copied ? "已复制" : "复制"}
           </button>
         </div>
-        <div className="bg-slate-800 text-green-400 rounded-xl p-4 text-sm font-mono">
+        <div className="bg-slate-800 text-green-400 rounded-md p-4 text-sm font-mono">
           {cssCode}
         </div>
       </div>

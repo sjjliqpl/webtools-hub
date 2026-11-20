@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState } from 'react';
 
 function rot13(text: string): string {
@@ -15,7 +16,7 @@ export default function Rot13() {
 
   const handleCopy = async () => {
     if (!output) return;
-    await navigator.clipboard.writeText(output);
+    if (!await copyText(output)) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -25,8 +26,7 @@ export default function Rot13() {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-1">ROT13 编解码</h2>
+    <div className="tool-surface max-w-lg mx-auto">
       <p className="text-sm text-slate-500 mb-4">ROT13 是自逆的，加密即解密</p>
 
       {/* Input */}
@@ -36,7 +36,7 @@ export default function Rot13() {
         onChange={e => setInput(e.target.value)}
         placeholder="请输入文本…"
         rows={4}
-        className="w-full rounded-xl border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30 font-mono resize-y mb-3"
+        className="w-full rounded-md border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30 font-mono resize-y mb-3"
       />
 
       {/* Swap Button */}
@@ -53,7 +53,7 @@ export default function Rot13() {
       {/* Output */}
       <label className="block text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">ROT13 结果</label>
       <div className="relative">
-        <div className="rounded-xl border border-slate-200 p-4 text-sm font-mono bg-slate-50 break-words min-h-[72px] text-slate-700 pr-20">
+        <div className="rounded-md border border-slate-200 p-4 text-sm font-mono bg-slate-50 break-words min-h-[72px] text-slate-700 pr-20">
           {output || <span className="text-slate-300">结果将显示在此…</span>}
         </div>
         <button

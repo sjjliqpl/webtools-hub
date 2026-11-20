@@ -59,26 +59,24 @@ export default function TicTacToe() {
   const winningCells = result ? new Set(result.line) : new Set<number>();
 
   const cellColor = (player: Player | null) => {
-    if (player === 'X') return 'text-indigo-600';
+    if (player === 'X') return 'text-blue-600';
     if (player === 'O') return 'text-pink-500';
     return '';
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-md mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">Tic Tac Toe</h2>
-
+    <div className="tool-surface max-w-md mx-auto">
       {/* Score */}
       <div className="flex gap-3 mb-4">
-        <div className="flex-1 rounded-xl bg-indigo-50 p-3 text-center">
-          <div className="text-xl font-bold text-indigo-600">{score.X}</div>
+        <div className="flex-1 rounded-md bg-blue-50 p-3 text-center">
+          <div className="text-xl font-bold text-blue-600">{score.X}</div>
           <div className="text-xs text-slate-500">X Wins</div>
         </div>
-        <div className="flex-1 rounded-xl bg-slate-50 p-3 text-center">
+        <div className="flex-1 rounded-md bg-slate-50 p-3 text-center">
           <div className="text-xl font-bold text-slate-600">{score.draw}</div>
           <div className="text-xs text-slate-500">Draws</div>
         </div>
-        <div className="flex-1 rounded-xl bg-pink-50 p-3 text-center">
+        <div className="flex-1 rounded-md bg-pink-50 p-3 text-center">
           <div className="text-xl font-bold text-pink-500">{score.O}</div>
           <div className="text-xs text-slate-500">O Wins</div>
         </div>
@@ -87,7 +85,7 @@ export default function TicTacToe() {
       {/* Status */}
       <div className="text-center mb-4">
         {result ? (
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${result.winner === 'X' ? 'bg-indigo-100 text-indigo-700' : 'bg-pink-100 text-pink-700'}`}>
+          <span className={`px-3 py-1 rounded-full text-xs font-medium ${result.winner === 'X' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700'}`}>
             {result.winner} wins! 🎉
           </span>
         ) : isDraw ? (
@@ -95,7 +93,7 @@ export default function TicTacToe() {
             Draw! 🤝
           </span>
         ) : (
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${currentPlayer === 'X' ? 'bg-indigo-100 text-indigo-700' : 'bg-pink-100 text-pink-700'}`}>
+          <span className={`px-3 py-1 rounded-full text-xs font-medium ${currentPlayer === 'X' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700'}`}>
             {currentPlayer}&apos;s turn
           </span>
         )}
@@ -118,13 +116,13 @@ export default function TicTacToe() {
       <div className="flex gap-2">
         <button
           onClick={newGame}
-          className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+          className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
         >
           New Game
         </button>
         <button
           onClick={resetScore}
-          className="flex-1 px-4 py-2 bg-slate-200 text-slate-700 rounded-xl text-sm font-medium hover:bg-slate-300 transition-colors"
+          className="flex-1 px-4 py-2 bg-slate-200 text-slate-700 rounded-md text-sm font-medium hover:bg-slate-300 transition-colors"
         >
           Reset Score
         </button>

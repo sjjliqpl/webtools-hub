@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const EMOJIS = ["🎨", "🎵", "🎮", "🎯", "🎪", "🎭", "🎸", "🎺"];
 
@@ -35,44 +35,28 @@ export default function MemoryGame() {
 
   const allMatched = cards.every((c) => c.matched);
 
-  useEffect(() => {
-    if (flipped.length === 2) {
-      setLocked(true);
-      const [a, b] = flipped;
-      if (cards[a].emoji === cards[b].emoji) {
-        setCards((prev) =>
-          prev.map((c) => (c.id === a || c.id === b ? { ...c, matched: true } : c))
-        );
-        setFlipped([]);
-        setLocked(false);
-      } else {
-        setTimeout(() => {
-          setCards((prev) =>
-            prev.map((c) => (c.id === a || c.id === b ? { ...c, flipped: false } : c))
-          );
-          setFlipped([]);
-          setLocked(false);
-        }, 1000);
-      }
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+  const handleClick = (id: number) => {
+    if (locked || flipped.length >= 2 || cards[id].flipped || cards[id].matched) return;
+    setCards(prev => prev.map(card => card.id === id ? { ...card, flipped: true } : card));
+    if (flipped.length === 0) { setFlipped([id]); return; }
+    const first = flipped[0];
+    setMoves(value => value + 1);
+    if (cards[first].emoji === cards[id].emoji) {
+      setCards(prev => prev.map(card => card.id === first || card.id === id ? { ...card, matched: true } : card));
+      setFlipped([]);
+    } else {
+      setFlipped([first,id]); setLocked(true);
+      timer.current = setTimeout(() => {
+        setCards(prev => prev.map(card => card.id === first || card.id === id ? { ...card, flipped: false } : card));
+        setFlipped([]); setLocked(false);
+      }, 850);
     }
-  }, [flipped, cards]);
-
-  const handleClick = useCallback(
-    (id: number) => {
-      if (locked || flipped.length >= 2) return;
-      const card = cards[id];
-      if (card.flipped || card.matched) return;
-
-      setCards((prev) =>
-        prev.map((c) => (c.id === id ? { ...c, flipped: true } : c))
-      );
-      setFlipped((prev) => [...prev, id]);
-      setMoves((m) => m + 1);
-    },
-    [locked, flipped, cards]
-  );
+  };
 
   const restart = () => {
+    if (timer.current) clearTimeout(timer.current);
     setCards(createCards());
     setFlipped([]);
     setMoves(0);
@@ -80,14 +64,14 @@ export default function MemoryGame() {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-md mx-auto">
+    <div className="tool-surface max-w-md mx-auto">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-slate-800">记忆翻牌</h2>
+
         <span className="text-sm text-slate-500">步数: {moves}</span>
       </div>
 
       {allMatched && (
-        <div className="mb-4 p-4 bg-green-50 text-green-700 rounded-xl text-center font-medium">
+        <div className="mb-4 p-4 bg-green-50 text-green-700 rounded-md text-center font-medium">
           🎉 恭喜！你用了 {moves} 步完成了游戏！
         </div>
       )}
@@ -111,14 +95,14 @@ export default function MemoryGame() {
               >
                 {/* Back */}
                 <div
-                  className="absolute inset-0 rounded-xl flex items-center justify-center text-2xl bg-indigo-500 text-white select-none"
+                  className="absolute inset-0 rounded-md flex items-center justify-center text-2xl bg-blue-500 text-white select-none"
                   style={{ backfaceVisibility: "hidden" }}
                 >
                   ❓
                 </div>
                 {/* Front */}
                 <div
-                  className={`absolute inset-0 rounded-xl flex items-center justify-center text-2xl select-none ${
+                  className={`absolute inset-0 rounded-md flex items-center justify-center text-2xl select-none ${
                     card.matched ? "bg-green-100" : "bg-slate-100"
                   }`}
                   style={{
@@ -136,7 +120,7 @@ export default function MemoryGame() {
 
       <button
         onClick={restart}
-        className="w-full px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+        className="w-full px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
       >
         新游戏
       </button>

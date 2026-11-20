@@ -44,8 +44,7 @@ function isPrivateIp(ip: string): boolean {
   return (
     a === 10 ||
     (a === 172 && b >= 16 && b <= 31) ||
-    (a === 192 && b === 168) ||
-    a === 127
+    (a === 192 && b === 168)
   )
 }
 
@@ -119,17 +118,16 @@ export default function SubnetCalculator() {
 
   return (
     <div className="space-y-4 max-w-2xl mx-auto">
-      <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-800 mb-1">IP 子网计算器</h2>
+      <div className="tool-surface">
         <p className="text-sm text-slate-500 mb-4">输入 CIDR 格式的 IP 地址，计算子网信息</p>
 
         <input
           type="text"
           value={input}
-          onChange={e => { setInput(e.target.value); setError('') }}
+          onChange={e => { setInput(e.target.value); setError(''); setResult(null) }}
           onKeyDown={e => e.key === 'Enter' && calculate()}
           placeholder="例: 192.168.1.1/24"
-          className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30 mb-3"
+          className="w-full rounded-md border border-slate-200 px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30 mb-3"
         />
 
         <div className="flex flex-wrap gap-2 mb-3">
@@ -145,26 +143,26 @@ export default function SubnetCalculator() {
         </div>
 
         {error && (
-          <div className="mb-3 text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2">{error}</div>
+          <div className="mb-3 text-sm text-red-600 bg-red-50 rounded-md px-4 py-2">{error}</div>
         )}
 
         <button
           onClick={calculate}
           disabled={!input.trim()}
-          className="w-full px-4 py-2.5 bg-teal-600 text-white rounded-xl text-sm font-medium hover:bg-teal-700 transition-colors disabled:opacity-50"
+          className="w-full px-4 py-2.5 bg-teal-600 text-white rounded-md text-sm font-medium hover:bg-teal-700 transition-colors disabled:opacity-50"
         >
           计算子网
         </button>
       </div>
 
       {result && (
-        <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+        <div className="tool-surface">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-3">子网信息</p>
           <div className="space-y-2">
             {rows.map(row => (
               <div
                 key={row.label}
-                className={`flex justify-between items-center rounded-xl px-4 py-2.5 ${row.highlight ? 'bg-teal-50' : 'bg-slate-50'}`}
+                className={`flex justify-between items-center rounded-md px-4 py-2.5 ${row.highlight ? 'bg-teal-50' : 'bg-slate-50'}`}
               >
                 <span className="text-sm text-slate-600">{row.label}</span>
                 <span className={`text-sm font-mono font-semibold ${row.highlight ? 'text-teal-700' : 'text-slate-700'}`}>{row.value}</span>
@@ -173,7 +171,7 @@ export default function SubnetCalculator() {
           </div>
 
           {/* Visual mask */}
-          <div className="mt-4 p-4 bg-slate-50 rounded-xl">
+          <div className="mt-4 p-4 bg-slate-50 rounded-md">
             <p className="text-xs text-slate-500 mb-2">子网掩码位图（/{result.cidr}）</p>
             <div className="flex flex-wrap gap-0.5">
               {Array.from({ length: 32 }, (_, i) => (

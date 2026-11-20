@@ -1,7 +1,8 @@
+import { copyText } from '../../lib/clipboard';
 import { useState } from 'react';
 
 const LABEL_CLS = 'text-xs font-medium text-slate-500 mb-1 block';
-const INPUT_CLS = 'w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500';
+const INPUT_CLS = 'w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500';
 
 export default function GridGenerator() {
   const [cols, setCols] = useState(3);
@@ -16,8 +17,8 @@ export default function GridGenerator() {
 
   const css = `.grid-container {\n  display: grid;\n  grid-template-columns: ${templateCols};\n  grid-template-rows: ${templateRows};\n  column-gap: ${colGap}px;\n  row-gap: ${rowGap}px;\n}`;
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(css);
+  const handleCopy = async () => {
+    if (!await copyText(css)) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -29,35 +30,33 @@ export default function GridGenerator() {
   ];
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-6">
-      <h2 className="text-lg font-semibold text-slate-800">CSS Grid Builder</h2>
-
+    <div className="tool-surface space-y-6">
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div>
-          <label className={LABEL_CLS}>Columns (1–12)</label>
+          <label className={LABEL_CLS}>列数（1–12）</label>
           <input
             type="number" min={1} max={12} value={cols} className={INPUT_CLS}
             onChange={e => {
-              const v = Math.min(12, Math.max(1, Number(e.target.value)));
+              const v = Math.min(12, Math.max(1, Math.floor(Number(e.target.value)) || 1));
               setCols(v);
               setTemplateCols(`repeat(${v}, 1fr)`);
             }}
           />
         </div>
         <div>
-          <label className={LABEL_CLS}>Rows (1–6)</label>
+          <label className={LABEL_CLS}>行数（1–6）</label>
           <input
             type="number" min={1} max={6} value={rows} className={INPUT_CLS}
-            onChange={e => setRows(Math.min(6, Math.max(1, Number(e.target.value))))}
+            onChange={e => setRows(Math.min(6, Math.max(1, Math.floor(Number(e.target.value)) || 1)))}
           />
         </div>
         <div>
           <label className={LABEL_CLS}>Column gap: {colGap}px</label>
-          <input type="range" min={0} max={40} value={colGap} onChange={e => setColGap(Number(e.target.value))} className="w-full accent-indigo-600 mt-1" />
+          <input type="range" min={0} max={40} value={colGap} onChange={e => setColGap(Number(e.target.value))} className="w-full accent-blue-600 mt-1" />
         </div>
         <div>
           <label className={LABEL_CLS}>Row gap: {rowGap}px</label>
-          <input type="range" min={0} max={40} value={rowGap} onChange={e => setRowGap(Number(e.target.value))} className="w-full accent-indigo-600 mt-1" />
+          <input type="range" min={0} max={40} value={rowGap} onChange={e => setRowGap(Number(e.target.value))} className="w-full accent-blue-600 mt-1" />
         </div>
       </div>
 
@@ -74,9 +73,9 @@ export default function GridGenerator() {
 
       {/* Preview */}
       <div>
-        <p className="text-xs font-medium text-slate-500 mb-2">Preview</p>
+        <p className="text-xs font-medium text-slate-500 mb-2">预览</p>
         <div
-          className="border-2 border-dashed border-indigo-300 rounded-xl p-4"
+          className="border-2 border-dashed border-blue-300 rounded-md p-4"
           style={{
             display: 'grid',
             gridTemplateColumns: templateCols,
@@ -100,12 +99,12 @@ export default function GridGenerator() {
       {/* CSS output */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-medium text-slate-500">Generated CSS</span>
-          <button onClick={handleCopy} className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors">
-            {copied ? 'Copied!' : 'Copy'}
+          <span className="text-xs font-medium text-slate-500">生成的 CSS</span>
+          <button onClick={handleCopy} className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
+            {copied ? '已复制' : '复制'}
           </button>
         </div>
-        <pre className="bg-slate-900 text-green-400 rounded-xl p-4 text-sm font-mono break-all whitespace-pre-wrap">{css}</pre>
+        <pre className="bg-slate-900 text-green-400 rounded-md p-4 text-sm font-mono break-all whitespace-pre-wrap">{css}</pre>
       </div>
     </div>
   );

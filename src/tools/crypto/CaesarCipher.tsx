@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState } from 'react';
 
 function caesar(text: string, shift: number, decrypt: boolean): string {
@@ -18,18 +19,17 @@ export default function CaesarCipher() {
 
   const handleCopy = async () => {
     if (!output) return;
-    await navigator.clipboard.writeText(output);
+    if (!await copyText(output)) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-1">凯撒密码</h2>
+    <div className="tool-surface max-w-lg mx-auto">
       <p className="text-sm text-slate-500 mb-4">字母位移加密 / 解密</p>
 
       {/* Mode Toggle */}
-      <div className="flex rounded-xl border border-slate-200 overflow-hidden mb-4">
+      <div className="flex rounded-md border border-slate-200 overflow-hidden mb-4">
         {(['encrypt', 'decrypt'] as const).map(m => (
           <button
             key={m}
@@ -66,12 +66,12 @@ export default function CaesarCipher() {
         onChange={e => setInput(e.target.value)}
         placeholder={mode === 'encrypt' ? '请输入明文…' : '请输入密文…'}
         rows={3}
-        className="w-full rounded-xl border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30 font-mono resize-y mb-3"
+        className="w-full rounded-md border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30 font-mono resize-y mb-3"
       />
 
       {/* Output */}
       <div className="relative">
-        <div className="rounded-xl border border-slate-200 p-4 text-sm font-mono bg-slate-50 break-words min-h-[72px] text-slate-700 pr-20">
+        <div className="rounded-md border border-slate-200 p-4 text-sm font-mono bg-slate-50 break-words min-h-[72px] text-slate-700 pr-20">
           {output || <span className="text-slate-300">结果将显示在此…</span>}
         </div>
         <button

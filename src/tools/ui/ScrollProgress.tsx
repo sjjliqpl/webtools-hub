@@ -23,16 +23,20 @@ export default function ScrollProgress() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollTop = document.documentElement.scrollTop;
-      const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const container = document.getElementById("page-content")!;
+      const scrollTop = container.scrollTop;
+      const scrollHeight = container.scrollHeight - container.clientHeight;
       setProgress(scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0);
     };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    const container = document.getElementById("page-content");
+    container?.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => container?.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <>
+      <p className="training-note" style={{ marginBottom: 16 }}>向下滚动内容面板，查看顶部进度条。</p>
       {/* Progress bar */}
       <div className="fixed top-0 left-0 right-0 z-50 h-1">
         <div
@@ -44,9 +48,9 @@ export default function ScrollProgress() {
         />
       </div>
 
-      <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-8">
+      <div className="tool-surface space-y-8">
         <div>
-          <h2 className="text-lg font-semibold text-slate-800">Scroll Progress Demo</h2>
+
           <p className="text-sm text-slate-500 mt-1">Scroll the page to see the progress bar at the top.</p>
         </div>
 
@@ -61,7 +65,7 @@ export default function ScrollProgress() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {CARDS.map((card, i) => (
-            <div key={i} className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-2">
+            <div key={i} className="rounded-md border border-slate-200 bg-slate-50 p-4 space-y-2">
               <h4 className="text-sm font-semibold text-slate-800">{card.title}</h4>
               <p className="text-xs text-slate-500">{card.desc}</p>
             </div>

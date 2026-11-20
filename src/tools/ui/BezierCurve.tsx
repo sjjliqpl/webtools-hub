@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState, useRef, useCallback, useEffect } from 'react';
 
 interface Point {
@@ -46,7 +47,7 @@ export default function BezierCurve() {
 
   const pathD = `M ${p0svg.x} ${p0svg.y} C ${p1svg.x} ${p1svg.y}, ${p2svg.x} ${p2svg.y}, ${p3svg.x} ${p3svg.y}`;
 
-  const getSVGPoint = useCallback((e: MouseEvent | React.MouseEvent): Point => {
+  const getSVGPoint = useCallback((e: PointerEvent | React.PointerEvent): Point => {
     const svg = svgRef.current;
     if (!svg) return { x: 0, y: 0 };
     const rect = svg.getBoundingClientRect();
@@ -56,7 +57,7 @@ export default function BezierCurve() {
     };
   }, []);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
+  const handleMouseMove = useCallback((e: PointerEvent) => {
     if (!dragging) return;
     const svgPt = getSVGPoint(e);
     const norm = fromSVG(svgPt.x, svgPt.y);
@@ -68,12 +69,12 @@ export default function BezierCurve() {
 
   useEffect(() => {
     if (dragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('pointermove', handleMouseMove);
+      window.addEventListener('pointerup', handleMouseUp);
     }
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('pointermove', handleMouseMove);
+      window.removeEventListener('pointerup', handleMouseUp);
     };
   }, [dragging, handleMouseMove, handleMouseUp]);
 
@@ -89,8 +90,8 @@ export default function BezierCurve() {
     setTimeout(() => setAnimating(false), 1400);
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(css);
+  const handleCopy = async () => {
+    if (!await copyText(css)) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -101,15 +102,13 @@ export default function BezierCurve() {
       <input
         type="number" step={0.01} min={min} max={max} value={val.toFixed(2)}
         onChange={e => onChange(Math.min(max, Math.max(min, parseFloat(e.target.value) || 0)))}
-        className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+        className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
       />
     </div>
   );
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-6">
-      <h2 className="text-lg font-semibold text-slate-800">CSS Cubic-Bezier Editor</h2>
-
+    <div className="tool-surface space-y-6">
       <div className="flex flex-col lg:flex-row gap-6">
         {/* SVG + presets */}
         <div className="space-y-4">
@@ -117,7 +116,8 @@ export default function BezierCurve() {
             ref={svgRef}
             width={SVG_SIZE}
             height={SVG_SIZE}
-            className="bg-slate-50 rounded-xl border border-slate-200 cursor-crosshair"
+            viewBox={`0 0 ${SVG_SIZE} ${SVG_SIZE}`}
+            className="bg-slate-50 rounded-md border border-slate-200 cursor-crosshair"
           >
             {/* Grid lines */}
             {[0, 0.25, 0.5, 0.75, 1].map(v => {
@@ -142,14 +142,14 @@ export default function BezierCurve() {
             {/* Draggable P1 */}
             <circle
               cx={p1svg.x} cy={p1svg.y} r={7} fill="#6366f1" stroke="white" strokeWidth={2}
-              style={{ cursor: 'grab' }}
-              onMouseDown={e => { e.preventDefault(); setDragging('p1'); }}
+              style={{ cursor: 'grab', touchAction: 'none' }}
+              onPointerDown={e => { e.preventDefault(); setDragging('p1'); }}
             />
             {/* Draggable P2 */}
             <circle
               cx={p2svg.x} cy={p2svg.y} r={7} fill="#ec4899" stroke="white" strokeWidth={2}
-              style={{ cursor: 'grab' }}
-              onMouseDown={e => { e.preventDefault(); setDragging('p2'); }}
+              style={{ cursor: 'grab', touchAction: 'none' }}
+              onPointerDown={e => { e.preventDefault(); setDragging('p2'); }}
             />
           </svg>
 
@@ -159,7 +159,7 @@ export default function BezierCurve() {
               <button
                 key={name}
                 onClick={() => applyPreset(name)}
-                className="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+                className="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors"
               >
                 {name}
               </button>
@@ -178,11 +178,11 @@ export default function BezierCurve() {
 
           {/* Animation preview */}
           <div>
-            <p className="text-xs font-medium text-slate-500 mb-2">Preview Animation</p>
-            <div className="bg-slate-50 rounded-xl border border-slate-200 p-4 h-16 relative overflow-hidden flex items-center">
+            <p className="text-xs font-medium text-slate-500 mb-2">动画预览</p>
+            <div className="bg-slate-50 rounded-md border border-slate-200 p-4 h-16 relative overflow-hidden flex items-center">
               <div
                 ref={ballRef}
-                className="w-8 h-8 rounded-full bg-indigo-500 shadow absolute"
+                className="w-8 h-8 rounded-full bg-blue-500 shadow absolute"
                 style={{
                   left: animating ? 'calc(100% - 48px)' : '8px',
                   transition: animating
@@ -194,21 +194,21 @@ export default function BezierCurve() {
             <button
               onClick={handlePlay}
               disabled={animating}
-              className="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
             >
-              {animating ? 'Playing…' : '▶ Play'}
+              {animating ? '播放中…' : '播放动画'}
             </button>
           </div>
 
           {/* CSS output */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-slate-500">Generated CSS</span>
-              <button onClick={handleCopy} className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors">
-                {copied ? 'Copied!' : 'Copy'}
+              <span className="text-xs font-medium text-slate-500">生成的 CSS</span>
+              <button onClick={handleCopy} className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
+                {copied ? '已复制' : '复制'}
               </button>
             </div>
-            <pre className="bg-slate-900 text-green-400 rounded-xl p-4 text-sm font-mono break-all whitespace-pre-wrap">{css}</pre>
+            <pre className="bg-slate-900 text-green-400 rounded-md p-4 text-sm font-mono break-all whitespace-pre-wrap">{css}</pre>
           </div>
         </div>
       </div>

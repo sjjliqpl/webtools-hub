@@ -52,8 +52,7 @@ export default function GuessNumber() {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-md mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-1">Guess the Number</h2>
+    <div className="tool-surface max-w-md mx-auto">
       <p className="text-sm text-slate-500 mb-4">Pick a number between 1 and 100</p>
 
       <form onSubmit={handleSubmit} className="flex gap-2 mb-4">
@@ -66,14 +65,14 @@ export default function GuessNumber() {
           onChange={(e) => setInput(e.target.value)}
           disabled={won}
           placeholder="Your guess"
-          className="flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 disabled:bg-slate-50"
+          className="flex-1 rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:bg-slate-50"
         />
         {won ? (
-          <button type="button" onClick={newGame} className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-medium hover:bg-emerald-700 transition-colors">
+          <button type="button" onClick={newGame} className="px-4 py-2 bg-emerald-600 text-white rounded-md text-sm font-medium hover:bg-emerald-700 transition-colors">
             New Game
           </button>
         ) : (
-          <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors">
+          <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
             Submit
           </button>
         )}
@@ -90,7 +89,7 @@ export default function GuessNumber() {
 
       <div className="flex items-center justify-between mb-3">
         <span className="text-sm text-slate-500">Attempts</span>
-        <span className="px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700">
+        <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
           {history.length}
         </span>
       </div>

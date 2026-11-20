@@ -1,4 +1,6 @@
+import { copyText } from '../../lib/clipboard';
 import { useState } from "react";
+import { randomIntegers } from "../../lib/toolMath";
 
 export default function RandomNumber() {
   const [min, setMin] = useState("1");
@@ -10,53 +12,20 @@ export default function RandomNumber() {
   const [copied, setCopied] = useState(false);
 
   const generate = () => {
-    const lo = parseInt(min);
-    const hi = parseInt(max);
-    const n = parseInt(count);
-
-    if (isNaN(lo) || isNaN(hi) || isNaN(n)) {
-      setError("请输入有效的数字");
-      return;
-    }
-    if (lo > hi) {
-      setError("最小值不能大于最大值");
-      return;
-    }
-    if (n <= 0) {
-      setError("生成数量必须大于 0");
-      return;
-    }
-    if (!allowDuplicates && n > hi - lo + 1) {
-      setError(`不允许重复时，最多生成 ${hi - lo + 1} 个数字`);
-      return;
-    }
-
-    setError("");
-
-    if (allowDuplicates) {
-      const nums = Array.from({ length: n }, () =>
-        Math.floor(Math.random() * (hi - lo + 1)) + lo
-      );
-      setResults(nums);
-    } else {
-      const pool = Array.from({ length: hi - lo + 1 }, (_, i) => lo + i);
-      for (let i = pool.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [pool[i], pool[j]] = [pool[j], pool[i]];
-      }
-      setResults(pool.slice(0, n));
-    }
+    try {
+      setResults(randomIntegers(min.trim() ? Number(min) : NaN, max.trim() ? Number(max) : NaN, Number(count), allowDuplicates));
+      setError("");
+    } catch (cause) { setError((cause as Error).message); setResults([]); }
   };
 
   const copyAll = async () => {
-    await navigator.clipboard.writeText(results.join(", "));
+    if (!await copyText(results.join(", "))) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-      <h2 className="text-lg font-semibold text-slate-800 mb-5">随机数生成器</h2>
+    <div className="tool-surface">
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -65,7 +34,7 @@ export default function RandomNumber() {
               type="number"
               value={min}
               onChange={(e) => setMin(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+              className="w-full rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
             />
           </div>
           <div>
@@ -74,7 +43,7 @@ export default function RandomNumber() {
               type="number"
               value={max}
               onChange={(e) => setMax(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+              className="w-full rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
             />
           </div>
         </div>
@@ -84,7 +53,7 @@ export default function RandomNumber() {
             type="number"
             value={count}
             onChange={(e) => setCount(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+            className="w-full rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
           />
         </div>
         <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
@@ -92,16 +61,16 @@ export default function RandomNumber() {
             type="checkbox"
             checked={allowDuplicates}
             onChange={(e) => setAllowDuplicates(e.target.checked)}
-            className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/30"
+            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500/30"
           />
           允许重复
         </label>
         {error && (
-          <div className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2">{error}</div>
+          <div className="text-sm text-red-600 bg-red-50 rounded-md px-4 py-2">{error}</div>
         )}
         <button
           onClick={generate}
-          className="w-full px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+          className="w-full px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
         >
           生成
         </button>
@@ -115,7 +84,7 @@ export default function RandomNumber() {
             </span>
             <button
               onClick={copyAll}
-              className="px-3 py-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
+              className="px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
             >
               {copied ? "已复制 ✓" : "复制全部"}
             </button>
@@ -124,7 +93,7 @@ export default function RandomNumber() {
             {results.map((num, i) => (
               <span
                 key={i}
-                className="inline-flex items-center px-3 py-1.5 rounded-lg bg-indigo-100 text-indigo-700 text-sm font-medium"
+                className="inline-flex items-center px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-sm font-medium"
               >
                 {num}
               </span>

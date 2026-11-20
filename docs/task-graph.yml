@@ -1,0 +1,41 @@
+project:
+  name: WebTools Hub
+  version: 1.0.0
+  source_of_truth:
+    fact_source: docs/fact-source.md
+    architecture_review: docs/architecture-review.md
+    open_questions: docs/open-questions.md
+    decisions_dir: docs/decisions
+
+tasks:
+  - id: TASK-001
+    title: 数字记忆八档时长
+    stage: mvp-slice
+    dependencies: []
+    status: done
+    acceptance_criteria: [8 档选项, 毫秒计时, 切换重置]
+  - id: TASK-002
+    title: 按参考布局统一全部工具
+    stage: foundation
+    dependencies: [TASK-001]
+    status: done
+    acceptance_criteria: [侧栏顶栏与白色内容面板, 响应式, 深浅主题, 收藏搜索与最近使用]
+  - id: TASK-003
+    title: 审查优化已有工具
+    stage: hardening
+    dependencies: [TASK-002]
+    status: done
+    acceptance_criteria: [逐工具审查记录, 输入边界和计时修复, 安全预览, 全路由浏览器回归]
+  - id: TASK-004
+    title: 新增六项训练和四项常用工具
+    stage: v1-completion
+    dependencies: [TASK-002]
+    status: done
+    acceptance_criteria: [10 个可用工具, 完整操作闭环, 桌面移动回归]
+  - id: TASK-005
+    title: 验证文档与 Pages 发布
+    stage: release
+    dependencies: [TASK-003, TASK-004]
+    status: in_progress
+    verification_commands: [npm run lint, npm test, npm run build]
+    acceptance_criteria: [更新 README 与审查记录, 提交推送 main, 同提交 Pages Action 成功]

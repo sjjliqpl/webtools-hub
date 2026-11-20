@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState } from 'react';
 
 function uuidv4(): string {
@@ -22,20 +23,19 @@ export default function UuidGenerator() {
   };
 
   const handleCopy = async (uuid: string, index: number) => {
-    await navigator.clipboard.writeText(uuid);
+    if (!await copyText(uuid)) return;
     setCopied(index);
     setTimeout(() => setCopied(null), 1500);
   };
 
   const handleCopyAll = async () => {
-    await navigator.clipboard.writeText(uuids.join('\n'));
+    if (!await copyText(uuids.join('\n'))) return;
     setCopiedAll(true);
     setTimeout(() => setCopiedAll(false), 1500);
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-xl mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-1">UUID 生成器</h2>
+    <div className="tool-surface max-w-xl mx-auto">
       <p className="text-sm text-slate-500 mb-4">生成符合 v4 标准的随机 UUID</p>
 
       <div className="flex items-center gap-3 mb-4">
@@ -58,14 +58,14 @@ export default function UuidGenerator() {
       <div className="flex gap-2 mb-4">
         <button
           onClick={generate}
-          className="flex-1 px-4 py-2 bg-violet-600 text-white rounded-xl text-sm font-medium hover:bg-violet-700 transition-colors"
+          className="flex-1 px-4 py-2 bg-violet-600 text-white rounded-md text-sm font-medium hover:bg-violet-700 transition-colors"
         >
           生成 UUID
         </button>
         <button
           onClick={handleCopyAll}
           disabled={uuids.length === 0}
-          className="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-sm font-medium hover:bg-slate-200 transition-colors disabled:opacity-40"
+          className="px-4 py-2 bg-slate-100 text-slate-700 rounded-md text-sm font-medium hover:bg-slate-200 transition-colors disabled:opacity-40"
         >
           {copiedAll ? '已复制 ✓' : '复制全部'}
         </button>
@@ -74,7 +74,7 @@ export default function UuidGenerator() {
       <div className="space-y-2">
         {uuids.map((uuid, i) => (
           <div key={i} className="flex items-center gap-2">
-            <code className="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-xs font-mono bg-slate-50 text-slate-700 break-all">
+            <code className="flex-1 rounded-md border border-slate-200 px-3 py-2 text-xs font-mono bg-slate-50 text-slate-700 break-all">
               {uuid}
             </code>
             <button

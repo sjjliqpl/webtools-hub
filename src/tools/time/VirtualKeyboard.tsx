@@ -19,40 +19,39 @@ export default function VirtualKeyboard() {
   const [shift, setShift] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleKey = (key: string) => {
-    let char = key;
-    if (shift) {
-      char = SHIFT_MAP[key] ?? key.toUpperCase();
-    }
-    setText((prev) => prev + char);
+  const insert = (value: string, erase = false) => {
+    const element = textareaRef.current;
+    const start = element?.selectionStart ?? text.length;
+    const end = element?.selectionEnd ?? text.length;
+    const from = erase && start === end ? Math.max(0, start - (text.codePointAt(start - 2)! > 0xffff ? 2 : 1)) : start;
+    setText(text.slice(0, from) + value + text.slice(end));
+    requestAnimationFrame(() => { element?.focus(); element?.setSelectionRange(from + value.length, from + value.length); });
   };
-
-  const handleBackspace = () => setText((prev) => prev.slice(0, -1));
-  const handleSpace = () => setText((prev) => prev + ' ');
-  const handleEnter = () => setText((prev) => prev + '\n');
+  const handleKey = (key: string) => insert(shift ? SHIFT_MAP[key] ?? key.toUpperCase() : key);
+  const handleBackspace = () => insert('', true);
+  const handleSpace = () => insert(' ');
+  const handleEnter = () => insert('\n');
 
   const keyClass =
     'min-w-[2.5rem] h-10 bg-slate-100 hover:bg-slate-200 rounded-lg text-sm font-medium flex items-center justify-center transition-all active:scale-95 cursor-pointer select-none';
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
-      <h2 className="text-lg font-semibold text-slate-800">⌨️ Virtual Keyboard</h2>
-
+    <div className="tool-surface space-y-4">
       <textarea
         ref={textareaRef}
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Click the keys below to type..."
-        className="w-full min-h-[120px] rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 resize-y"
+        placeholder="点击下方按键输入…"
+        className="w-full min-h-[120px] rounded-md border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 resize-y"
       />
 
-      <div className="space-y-2">
+      <div className="space-y-2 overflow-x-auto w-full min-w-0" style={{ paddingBottom:8 }}>
         {ROWS.map((row, ri) => (
-          <div key={ri} className="flex gap-1 justify-center">
+          <div key={ri} className="flex gap-1 justify-center min-w-[560px]">
             {ri === 3 && (
               <button
                 onClick={() => setShift(!shift)}
-                className={`${keyClass} px-3 ${shift ? 'bg-indigo-200 text-indigo-700' : ''}`}
+                className={`${keyClass} px-3 ${shift ? 'bg-blue-200 text-blue-700' : ''}`}
               >
                 Shift
               </button>
@@ -70,7 +69,7 @@ export default function VirtualKeyboard() {
           </div>
         ))}
 
-        <div className="flex gap-1 justify-center">
+        <div className="flex gap-1 justify-center min-w-[560px]">
           <button onClick={handleEnter} className={`${keyClass} px-4`}>
             Enter
           </button>

@@ -1,123 +1,28 @@
-import { useState, useRef, useCallback } from "react";
-
-type Phase = "idle" | "waiting" | "ready" | "result" | "tooEarly";
-
+import { useEffect,useRef,useState } from 'react'
+import { TrainingStats } from '../../components/Training'
+type Phase='idle'|'waiting'|'ready'|'early'|'result'
 export default function ReactionTest() {
-  const [phase, setPhase] = useState<Phase>("idle");
-  const [reactionTime, setReactionTime] = useState<number | null>(null);
-  const [attempts, setAttempts] = useState<number[]>([]);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const startRef = useRef<number>(0);
-
-  const cleanup = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-  };
-
-  const start = useCallback(() => {
-    cleanup();
-    setPhase("waiting");
-    setReactionTime(null);
-    const delay = 1000 + Math.random() * 4000;
-    timerRef.current = setTimeout(() => {
-      startRef.current = performance.now();
-      setPhase("ready");
-    }, delay);
-  }, []);
-
-  const handleClick = useCallback(() => {
-    switch (phase) {
-      case "idle":
-      case "result":
-      case "tooEarly":
-        start();
-        break;
-      case "waiting":
-        cleanup();
-        setPhase("tooEarly");
-        break;
-      case "ready": {
-        const elapsed = Math.round(performance.now() - startRef.current);
-        setReactionTime(elapsed);
-        setAttempts((prev) => [...prev.slice(-4), elapsed]);
-        setPhase("result");
-        break;
-      }
-    }
-  }, [phase, start]);
-
-  const reset = () => {
-    cleanup();
-    setPhase("idle");
-    setReactionTime(null);
-    setAttempts([]);
-  };
-
-  const avg =
-    attempts.length > 0
-      ? Math.round(attempts.reduce((a, b) => a + b, 0) / attempts.length)
-      : null;
-
-  const bgColor: Record<Phase, string> = {
-    idle: "bg-slate-700",
-    waiting: "bg-red-500",
-    ready: "bg-green-500",
-    result: "bg-indigo-600",
-    tooEarly: "bg-yellow-500",
-  };
-
-  const message: Record<Phase, string> = {
-    idle: "点击开始",
-    waiting: "等待...",
-    ready: "点击!",
-    result: `${reactionTime} ms`,
-    tooEarly: "太快了! 点击重试",
-  };
-
-  return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-md mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">反应速度测试</h2>
-
-      <div
-        onClick={handleClick}
-        className={`${bgColor[phase]} rounded-2xl flex flex-col items-center justify-center cursor-pointer select-none transition-colors min-h-[240px] mb-4`}
-      >
-        <span className="text-white text-3xl font-bold">{message[phase]}</span>
-        {phase === "ready" && (
-          <span className="text-white/80 text-sm mt-2">准备...</span>
-        )}
-        {phase === "result" && (
-          <span className="text-white/80 text-sm mt-2">点击再试一次</span>
-        )}
-      </div>
-
-      {attempts.length > 0 && (
-        <div className="mb-4 p-4 bg-slate-50 rounded-xl">
-          <div className="flex justify-between text-sm text-slate-600 mb-2">
-            <span>最近记录</span>
-            <span>平均: {avg} ms</span>
-          </div>
-          <div className="flex gap-2">
-            {attempts.map((t, i) => (
-              <span
-                key={i}
-                className="flex-1 text-center text-xs py-1 bg-white rounded-lg text-slate-700 border border-slate-200"
-              >
-                {t} ms
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <button
-        onClick={reset}
-        className="w-full px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
-      >
-        重置
-      </button>
-    </div>
-  );
+  const [phase,setPhase]=useState<Phase>('idle')
+  const [attempts,setAttempts]=useState<number[]>([])
+  const timer=useRef<ReturnType<typeof setTimeout>|null>(null)
+  const frame=useRef(0)
+  const started=useRef(0)
+  function clear(){if(timer.current)clearTimeout(timer.current);cancelAnimationFrame(frame.current)}
+  useEffect(()=>()=>{if(timer.current)clearTimeout(timer.current);cancelAnimationFrame(frame.current)},[])
+  function act(){
+    if(phase==='waiting'){clear();setPhase('early');return}
+    if(phase==='ready') {setAttempts(prev=>[...prev,Math.round(performance.now()-started.current)]);setPhase('result');return}
+    clear();setPhase('waiting')
+    timer.current=setTimeout(()=>{frame.current=requestAnimationFrame(()=>{started.current=performance.now();setPhase('ready')})},1200+Math.random()*2800)
+  }
+  useEffect(()=>{
+    function hidden(){if(document.hidden){if(timer.current)clearTimeout(timer.current);cancelAnimationFrame(frame.current);setPhase('idle')}}
+    document.addEventListener('visibilitychange',hidden);return()=>document.removeEventListener('visibilitychange',hidden)
+  },[])
+  const average=attempts.length ? Math.round(attempts.reduce((a,b)=>a+b,0)/attempts.length) : 0
+  const labels={idle:'准备好了吗？',waiting:'等待变绿…',ready:'现在点击！',early:'抢跑了，点击重试',result:`${attempts.at(-1)} 毫秒`}
+  return <div className="tool-surface"><TrainingStats items={[{label:'已完成',value:attempts.length},{label:'平均反应',value:average ? `${average}ms` : '—'},{label:'最快反应',value:attempts.length ? `${Math.min(...attempts)}ms` : '—'}]} />
+    <button className="training-stage" style={{width:'100%',background:phase==='waiting' ? '#dc2626' : phase==='ready' ? '#16a34a' : 'var(--canvas)',color:phase==='waiting'||phase==='ready' ? 'white' : 'var(--text)',touchAction:'none'}} onPointerDown={event=>{if(event.button===0){event.preventDefault();event.currentTarget.focus();act()}}} onKeyDown={event=>{if(!event.repeat&&(event.code==='Space'||event.key==='Enter')){event.preventDefault();event.currentTarget.focus();act()}}}><strong style={{fontSize:28}}>{labels[phase]}</strong><span>{phase==='idle' ? '点击开始，变绿后立即点击，也支持空格或 Enter。' : phase==='result' ? '点击继续下一次测试' : phase==='early' ? '等到区域变成绿色再响应' : '集中注意力，准备响应'}</span></button>
+    <div className="training-actions"><button className="secondary-button" onClick={()=>{clear();setPhase('idle');setAttempts([])}}>重置</button><span className="training-note">切换到后台会取消当前等待，避免污染成绩。</span></div>
+  </div>
 }

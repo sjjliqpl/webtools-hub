@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
 export default function Stopwatch() {
   const [elapsed, setElapsed] = useState(0);
@@ -14,12 +14,14 @@ export default function Stopwatch() {
     }
   }, []);
 
+  useEffect(() => clear, [clear]);
+
   const start = () => {
     if (running) return;
     setRunning(true);
-    startRef.current = Date.now() - elapsed;
+    startRef.current = performance.now() - elapsed;
     intervalRef.current = setInterval(() => {
-      setElapsed(Date.now() - startRef.current);
+      setElapsed(performance.now() - startRef.current);
     }, 10);
   };
 
@@ -60,7 +62,7 @@ export default function Stopwatch() {
   }
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col items-center gap-5">
+    <div className="tool-surface flex flex-col items-center gap-5">
       {/* Time display */}
       <div className="text-5xl font-mono font-bold tracking-wider text-slate-900">
         {format(elapsed)}
@@ -71,14 +73,14 @@ export default function Stopwatch() {
         {!running ? (
           <button
             onClick={start}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
           >
             开始
           </button>
         ) : (
           <button
             onClick={pause}
-            className="px-4 py-2 bg-amber-500 text-white rounded-xl text-sm font-medium hover:bg-amber-600 transition-colors"
+            className="px-4 py-2 bg-amber-500 text-white rounded-md text-sm font-medium hover:bg-amber-600 transition-colors"
           >
             暂停
           </button>
@@ -86,13 +88,13 @@ export default function Stopwatch() {
         <button
           onClick={lap}
           disabled={!running}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-40"
+          className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-40"
         >
           计次
         </button>
         <button
           onClick={reset}
-          className="px-4 py-2 bg-slate-200 text-slate-700 rounded-xl text-sm font-medium hover:bg-slate-300 transition-colors"
+          className="px-4 py-2 bg-slate-200 text-slate-700 rounded-md text-sm font-medium hover:bg-slate-300 transition-colors"
         >
           重置
         </button>
@@ -100,7 +102,7 @@ export default function Stopwatch() {
 
       {/* Laps */}
       {laps.length > 0 && (
-        <div className="w-full max-h-56 overflow-y-auto rounded-xl border border-slate-200">
+        <div className="w-full max-h-56 overflow-y-auto rounded-md border border-slate-200">
           <table className="w-full text-sm">
             <thead className="sticky top-0 bg-slate-50">
               <tr className="text-slate-500 text-left">

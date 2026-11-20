@@ -1,26 +1,6 @@
-import { useState, useCallback, useEffect } from 'react';
-
-const CHARSETS = {
-  uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-  lowercase: 'abcdefghijklmnopqrstuvwxyz',
-  digits: '0123456789',
-  special: '!@#$%^&*()_+-=[]{}|;:,.<>?',
-};
-
-type CharsetKey = keyof typeof CHARSETS;
-
-function generatePassword(length: number, options: Record<CharsetKey, boolean>): string {
-  let pool = '';
-  for (const key of Object.keys(options) as CharsetKey[]) {
-    if (options[key]) pool += CHARSETS[key];
-  }
-  if (!pool) return '';
-  let pwd = '';
-  for (let i = 0; i < length; i++) {
-    pwd += pool[Math.floor(Math.random() * pool.length)];
-  }
-  return pwd;
-}
+import { copyText } from '../../lib/clipboard';
+import { useState } from 'react';
+import { generatePassword, type CharsetKey } from '../../lib/password';
 
 function getStrength(password: string, options: Record<CharsetKey, boolean>): { label: string; color: string; width: string } {
   const activeCount = (Object.values(options) as boolean[]).filter(Boolean).length;
@@ -44,27 +24,21 @@ export default function PasswordGenerator() {
     digits: true,
     special: false,
   });
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState(() => generatePassword(16, { uppercase:true,lowercase:true,digits:true,special:false }));
   const [copied, setCopied] = useState(false);
 
-  const generate = useCallback(() => {
-    setPassword(generatePassword(length, options));
-    setCopied(false);
-  }, [length, options]);
-
-  useEffect(() => {
-    generate();
-  }, [generate]);
+  const generate = () => { setPassword(generatePassword(length, options)); setCopied(false); };
+  const changeLength = (value: number) => { setLength(value); setPassword(generatePassword(value, options)); setCopied(false); };
 
   const handleCopy = async () => {
     if (!password) return;
-    await navigator.clipboard.writeText(password);
+    if (!await copyText(password)) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
 
   const toggleOption = (key: CharsetKey) => {
-    setOptions((prev) => ({ ...prev, [key]: !prev[key] }));
+    const next = { ...options, [key]: !options[key] }; setOptions(next); setPassword(generatePassword(length, next)); setCopied(false);
   };
 
   const strength = password ? getStrength(password, options) : null;
@@ -77,21 +51,19 @@ export default function PasswordGenerator() {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">Password Generator</h2>
-
+    <div className="tool-surface max-w-lg mx-auto">
       <div className="mb-4">
         <div className="flex items-center justify-between mb-1">
           <label className="text-sm text-slate-600">Length</label>
-          <span className="text-sm font-medium text-indigo-600">{length}</span>
+          <span className="text-sm font-medium text-blue-600">{length}</span>
         </div>
         <input
           type="range"
           min={8}
           max={64}
           value={length}
-          onChange={(e) => setLength(Number(e.target.value))}
-          className="w-full accent-indigo-600"
+          onChange={(e) => changeLength(Number(e.target.value))}
+          className="w-full accent-blue-600"
         />
       </div>
 
@@ -102,7 +74,7 @@ export default function PasswordGenerator() {
               type="checkbox"
               checked={options[key]}
               onChange={() => toggleOption(key)}
-              className="accent-indigo-600 w-4 h-4"
+              className="accent-blue-600 w-4 h-4"
             />
             <span className="text-sm text-slate-700">{optionLabels[key]}</span>
           </label>
@@ -110,7 +82,7 @@ export default function PasswordGenerator() {
       </div>
 
       <div className="relative mb-3">
-        <div className="rounded-xl border border-slate-200 px-4 py-3 text-sm font-mono bg-slate-50 break-all pr-20 min-h-[48px]">
+        <div className="rounded-md border border-slate-200 px-4 py-3 text-sm font-mono bg-slate-50 break-all pr-20 min-h-[48px]">
           {password || <span className="text-slate-400">Select at least one option</span>}
         </div>
         <button
@@ -118,7 +90,7 @@ export default function PasswordGenerator() {
           disabled={!password}
           className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 rounded-full text-xs font-medium bg-slate-200 text-slate-700 hover:bg-slate-300 transition-colors disabled:opacity-40"
         >
-          {copied ? 'Copied!' : 'Copy'}
+          {copied ? '已复制' : '复制'}
         </button>
       </div>
 
@@ -138,7 +110,7 @@ export default function PasswordGenerator() {
 
       <button
         onClick={generate}
-        className="w-full px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+        className="w-full px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
       >
         Generate Password
       </button>

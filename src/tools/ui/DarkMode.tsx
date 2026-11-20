@@ -4,13 +4,13 @@ export default function DarkMode() {
   const [dark, setDark] = useState(false);
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+    <div className="tool-surface">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-slate-800">Dark Mode 切换演示</h2>
+
         <button
           onClick={() => setDark(!dark)}
           className={`relative w-16 h-8 rounded-full transition-colors duration-300 ${
-            dark ? "bg-indigo-600" : "bg-slate-300"
+            dark ? "bg-blue-600" : "bg-slate-300"
           }`}
         >
           <span
@@ -24,7 +24,7 @@ export default function DarkMode() {
       </div>
 
       <div
-        className={`rounded-2xl p-6 transition-all duration-500 ${
+        className={`rounded-lg p-6 transition-all duration-500 ${
           dark ? "bg-slate-900 text-white" : "bg-white text-slate-800 border border-slate-200"
         }`}
       >
@@ -54,7 +54,7 @@ export default function DarkMode() {
           ].map((card) => (
             <div
               key={card.title}
-              className={`rounded-xl p-4 transition-all duration-500 ${
+              className={`rounded-md p-4 transition-all duration-500 ${
                 dark
                   ? "bg-slate-800 border border-slate-700"
                   : "bg-slate-50 border border-slate-100"
@@ -79,7 +79,7 @@ export default function DarkMode() {
         </div>
 
         <div
-          className={`rounded-xl p-4 text-sm transition-all duration-500 ${
+          className={`rounded-md p-4 text-sm transition-all duration-500 ${
             dark ? "bg-slate-800 text-slate-300" : "bg-slate-50 text-slate-600"
           }`}
         >

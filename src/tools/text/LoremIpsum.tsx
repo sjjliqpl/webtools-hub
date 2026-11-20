@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState } from 'react';
 
 const LOREM_WORDS = [
@@ -59,20 +60,18 @@ export default function LoremIpsum() {
   };
 
   const copy = async () => {
-    await navigator.clipboard.writeText(output);
+    if (!await copyText(output)) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">Lorem Ipsum 生成器</h2>
-
+    <div className="tool-surface">
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <select
           value={type}
           onChange={(e) => setType(e.target.value as GenType)}
-          className="rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+          className="rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
         >
           <option value="paragraphs">段落</option>
           <option value="sentences">句子</option>
@@ -83,19 +82,19 @@ export default function LoremIpsum() {
           min={1}
           max={100}
           value={quantity}
-          onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-          className="w-20 rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+          onChange={(e) => setQuantity(Math.min(100, Math.max(1, parseInt(e.target.value) || 1)))}
+          className="w-20 rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
         />
         <button
           onClick={generate}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+          className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
         >
           生成
         </button>
         {output && (
           <button
             onClick={copy}
-            className="px-3 py-2 text-sm font-medium rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
+            className="px-3 py-2 text-sm font-medium rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
           >
             {copied ? '已复制 ✓' : '复制'}
           </button>
@@ -106,7 +105,7 @@ export default function LoremIpsum() {
         value={output}
         readOnly
         rows={14}
-        className="w-full rounded-xl border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 font-mono bg-slate-50 resize-none"
+        className="w-full rounded-md border border-slate-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 font-mono bg-slate-50 resize-none"
         placeholder="点击生成按钮..."
       />
     </div>

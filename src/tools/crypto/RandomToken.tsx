@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState } from 'react';
 
 type TokenFormat = 'hex' | 'base64' | 'alphanumeric';
@@ -62,14 +63,13 @@ export default function RandomToken() {
   };
 
   const handleCopy = async (token: string, index: number) => {
-    await navigator.clipboard.writeText(token);
+    if (!await copyText(token)) return;
     setCopied(index);
     setTimeout(() => setCopied(null), 1500);
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-xl mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-1">随机令牌生成</h2>
+    <div className="tool-surface max-w-xl mx-auto">
       <p className="text-sm text-slate-500 mb-4">生成随机 API 密钥 / 安全令牌</p>
 
       {/* Format */}
@@ -116,14 +116,14 @@ export default function RandomToken() {
           min={1}
           max={10}
           value={count}
-          onChange={e => setCount(Math.min(10, Math.max(1, Number(e.target.value))))}
-          className="w-20 rounded-xl border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30"
+          onChange={e => setCount(Math.min(10, Math.max(1, Math.floor(Number(e.target.value)) || 1)))}
+          className="w-20 rounded-md border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30"
         />
       </div>
 
       <button
         onClick={generate}
-        className="w-full px-4 py-2 bg-violet-600 text-white rounded-xl text-sm font-medium hover:bg-violet-700 transition-colors mb-4"
+        className="w-full px-4 py-2 bg-violet-600 text-white rounded-md text-sm font-medium hover:bg-violet-700 transition-colors mb-4"
       >
         生成令牌
       </button>
@@ -131,7 +131,7 @@ export default function RandomToken() {
       <div className="space-y-2">
         {tokens.map((token, i) => (
           <div key={i} className="flex items-center gap-2">
-            <code className="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-xs font-mono bg-slate-50 text-slate-700 break-all">
+            <code className="flex-1 rounded-md border border-slate-200 px-3 py-2 text-xs font-mono bg-slate-50 text-slate-700 break-all">
               {token}
             </code>
             <button

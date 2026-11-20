@@ -39,8 +39,8 @@ function clamp(v: number) { return Math.max(0, Math.min(255, v)); }
 
 function isOnDigit(x: number, y: number, answer: string, canvasW: number, canvasH: number): boolean {
   const chars = answer.split("");
-  const digitW = 200;
-  const digitH = 280;
+  const digitW = answer.length === 2 ? 92 : 140;
+  const digitH = 196;
   const totalW = chars.length === 2 ? digitW * 2 + 20 : digitW;
   const startX = (canvasW - totalW) / 2;
   const startY = (canvasH - digitH) / 2;
@@ -98,8 +98,8 @@ export default function ColorBlindTest() {
   }, [current]);
 
   useEffect(() => {
-    drawCurrent();
-  }, [drawCurrent]);
+    if (!done) drawCurrent();
+  }, [drawCurrent, done]);
 
   const handleNext = () => {
     const next = [...answers, input.trim()];
@@ -124,9 +124,8 @@ export default function ColorBlindTest() {
     : 0;
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-md mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-1">色盲检测</h2>
-
+    <div className="tool-surface max-w-md mx-auto">
+      <p className="training-note" style={{ marginBottom: 16 }}>程序生成的颜色辨识练习，不是标准医学检查图，结果不能用于色觉诊断。</p>
       {!done ? (
         <>
           <p className="text-sm text-slate-600 mb-3">第 {current + 1} / {PLATES.length} 张：图中有什么数字？</p>
@@ -134,7 +133,7 @@ export default function ColorBlindTest() {
             ref={canvasRef}
             width={300}
             height={300}
-            className="rounded-xl border border-slate-200 mb-4 mx-auto block"
+            className="rounded-md border border-slate-200 mb-4 mx-auto block max-w-full"
           />
           <div className="flex gap-2">
             <input
@@ -143,13 +142,13 @@ export default function ColorBlindTest() {
               onChange={e => setInput(e.target.value.replace(/\D/g, ""))}
               onKeyDown={e => e.key === "Enter" && input.length > 0 && handleNext()}
               placeholder="输入你看到的数字"
-              className="flex-1 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="flex-1 border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               autoFocus
             />
             <button
               onClick={handleNext}
               disabled={input.length === 0}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
             >
               下一张
             </button>
@@ -160,7 +159,7 @@ export default function ColorBlindTest() {
           <div className="text-4xl mb-3">{correctCount === PLATES.length ? "🌈" : "👁️"}</div>
           <p className="text-xl font-bold text-slate-800 mb-1">{correctCount} / {PLATES.length}</p>
           <p className={`text-sm font-medium mb-4 ${correctCount === PLATES.length ? "text-green-600" : "text-orange-500"}`}>
-            {correctCount === PLATES.length ? "全部正确！色觉正常" : "可能有色觉偏差"}
+            {correctCount === PLATES.length ? "本轮全部答对" : "可以再试一轮，留意图案中的数字"}
           </p>
           <div className="text-left mb-4 space-y-1">
             {PLATES.map((p, i) => {
@@ -175,7 +174,7 @@ export default function ColorBlindTest() {
           </div>
           <button
             onClick={handleRestart}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
           >
             再次测试
           </button>

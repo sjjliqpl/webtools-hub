@@ -1,10 +1,23 @@
-import { useParams, useNavigate } from 'react-router-dom'
-import { Suspense, lazy, useState, useEffect } from 'react'
-import { tools, categories } from '../data/tools'
-import { useApp } from '../context/AppContext'
-import { translations, categoryNames, toolTranslations } from '../i18n/translations'
+import { useParams, Link } from 'react-router-dom'
+import { Suspense, lazy, useEffect } from 'react'
+import { tools } from '../data/tools'
+import { useApp } from '../context/useApp'
+import { toolTranslations } from '../i18n/translations'
+import AppShell from '../components/AppShell'
+import ToolBoundary from '../components/ToolBoundary'
+import Icon from '../components/Icon'
 
 const toolComponents: Record<string, React.LazyExoticComponent<React.ComponentType>> = {
+  'click-speed': lazy(() => import('../tools/test/ClickSpeed')),
+  'mouse-tracking': lazy(() => import('../tools/test/MouseTracking')),
+  'keyboard-reaction': lazy(() => import('../tools/test/KeyboardReaction')),
+  'keyboard-tester': lazy(() => import('../tools/test/KeyboardTester')),
+  'sequence-memory': lazy(() => import('../tools/test/SequenceMemory')),
+  'stroop-test': lazy(() => import('../tools/test/StroopTest')),
+  'regex-tester': lazy(() => import('../tools/web/RegexTester')),
+  'url-parser': lazy(() => import('../tools/web/UrlParser')),
+  'text-diff': lazy(() => import('../tools/web/TextDiff')),
+  'image-compressor': lazy(() => import('../tools/web/ImageCompressor')),
   'word-counter': lazy(() => import('../tools/text/WordCounter')),
   'case-converter': lazy(() => import('../tools/text/CaseConverter')),
   'json-formatter': lazy(() => import('../tools/text/JsonFormatter')),
@@ -87,95 +100,14 @@ const toolComponents: Record<string, React.LazyExoticComponent<React.ComponentTy
 
 export default function ToolPage() {
   const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
-  const tool = tools.find(t => t.id === id)
-  const cat = categories.find(c => c.id === tool?.category)
+  const tool = tools.find(item => item.id === id)
   const Component = id ? toolComponents[id] : null
-  const { lang, setLang, theme, toggleTheme } = useApp()
-  const t = translations[lang]
-  const isDark = theme === 'dark'
-
-  const [favorites, setFavorites] = useState<string[]>(() => {
-    try { return JSON.parse(localStorage.getItem('webtools-favorites') || '[]') } catch { return [] }
-  })
-
-  useEffect(() => {
-    localStorage.setItem('webtools-favorites', JSON.stringify(favorites))
-  }, [favorites])
-
-  const toolName = tool ? (lang === 'en' ? (toolTranslations[tool.id]?.name || tool.name) : tool.name) : ''
-  const catName = cat ? (categoryNames[cat.id]?.[lang] || cat.name) : ''
-
-  if (!tool || !Component) {
-    return (
-      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-slate-900' : 'bg-slate-50'}`}>
-        <div className="text-center">
-          <p className="text-5xl mb-4">🤷</p>
-          <p className={`mb-4 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{t.notFound}</p>
-          <button onClick={() => navigate('/')} className="text-indigo-500 hover:underline">{t.goHome}</button>
-        </div>
-      </div>
-    )
-  }
-
-  const isFav = favorites.includes(tool.id)
-
-  return (
-    <div className={`min-h-screen transition-colors duration-300 ${isDark ? 'bg-slate-900' : 'bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-50'}`}>
-      {/* Tool Header */}
-      <header className={`sticky top-0 z-50 backdrop-blur-xl border-b ${isDark ? 'bg-slate-900/80 border-slate-700/50' : 'bg-white/70 border-slate-200/50'}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate(-1)}
-              className={`transition-colors text-sm flex items-center gap-1 ${isDark ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600'}`}
-            >
-              {t.back}
-            </button>
-            <div className={`w-px h-5 ${isDark ? 'bg-slate-700' : 'bg-slate-200'}`} />
-            <span className="text-xl">{tool.icon}</span>
-            <div>
-              <h1 className={`font-semibold text-sm font-[var(--font-display)] ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>{toolName}</h1>
-              <p className={`text-[10px] flex items-center gap-1 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: cat?.color }} />
-                {catName}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')}
-              className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-all ${isDark ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-white border-slate-200 text-slate-600'}`}
-            >
-              {lang === 'zh' ? t.langEn : t.langZh}
-            </button>
-            <button
-              onClick={toggleTheme}
-              className={`px-2.5 py-1 rounded-lg text-xs border transition-all ${isDark ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-white border-slate-200 text-slate-600'}`}
-            >
-              {isDark ? '☀️' : '🌙'}
-            </button>
-            <button
-              onClick={() => setFavorites(prev => prev.includes(tool.id) ? prev.filter(f => f !== tool.id) : [...prev, tool.id])}
-              className="text-lg hover:scale-110 transition-transform"
-              title={isFav ? t.removeFavorite : t.addFavorite}
-            >
-              {isFav ? '⭐' : '☆'}
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Tool Content */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-        <Suspense fallback={
-          <div className="flex items-center justify-center py-20">
-            <div className="animate-spin text-3xl">⚡</div>
-          </div>
-        }>
-          <Component />
-        </Suspense>
-      </main>
-    </div>
-  )
+  const { lang, favorites, toggleFavorite, recordVisit } = useApp()
+  const zh = lang === 'zh'
+  useEffect(() => { if (tool) recordVisit(tool.id) }, [tool, recordVisit])
+  const name = tool ? (zh ? tool.name : toolTranslations[tool.id]?.name || tool.name) : (zh ? '工具未找到' : 'Tool not found')
+  useEffect(() => { document.title = `${name} · WebTools Hub` }, [name])
+  return <AppShell title={name} description={tool ? (zh ? tool.description : toolTranslations[tool.id]?.description || tool.description) : ''} category={tool?.category} actions={tool && <><Link className="secondary-button" to={`/?category=${tool.category}`}>{zh ? '返回分类' : 'Back'}</Link><button className={`secondary-button ${favorites.includes(tool.id) ? 'is-favorite' : ''}`} aria-pressed={favorites.includes(tool.id)} onClick={() => toggleFavorite(tool.id)}><Icon name="star" size={15} />{favorites.includes(tool.id) ? (zh ? '已收藏' : 'Saved') : (zh ? '收藏' : 'Save')}</button></>}>
+    {tool && Component ? <ToolBoundary key={id}><Suspense fallback={<div className="loading-state" role="status">{zh ? '工具加载中…' : 'Loading…'}</div>}><div className="tool-body"><Component key={id} /></div></Suspense></ToolBoundary> : <div className="empty-state"><p>{zh ? '这个地址没有对应的工具。' : 'This tool does not exist.'}</p><Link to="/" className="primary-button">{zh ? '返回首页' : 'Home'}</Link></div>}
+  </AppShell>
 }

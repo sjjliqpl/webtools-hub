@@ -19,7 +19,7 @@ function calculate(left: number, op: string, right: number): number {
     case "+": return left + right;
     case "-": return left - right;
     case "×": return left * right;
-    case "÷": return right !== 0 ? left / right : 0;
+    case "÷": return right !== 0 ? left / right : NaN;
     default: return right;
   }
 }
@@ -29,19 +29,19 @@ export default function Calculator() {
 
   const inputDigit = (digit: string) => {
     setState((s) => {
-      if (s.waitingForOperand) {
+      if (s.waitingForOperand || s.displayValue === "错误") {
         return { ...s, displayValue: digit, waitingForOperand: false };
       }
       return {
         ...s,
-        displayValue: s.displayValue === "0" ? digit : s.displayValue + digit,
+        displayValue: s.displayValue === "0" || s.displayValue === "错误" ? digit : s.displayValue + digit,
       };
     });
   };
 
   const inputDot = () => {
     setState((s) => {
-      if (s.waitingForOperand) {
+      if (s.waitingForOperand || s.displayValue === "错误") {
         return { ...s, displayValue: "0.", waitingForOperand: false };
       }
       if (s.displayValue.includes(".")) return s;
@@ -75,7 +75,7 @@ export default function Calculator() {
       const current = parseFloat(s.displayValue);
       if (s.operator && !s.waitingForOperand && s.previousValue !== null) {
         const result = calculate(parseFloat(s.previousValue), s.operator, current);
-        const resultStr = String(parseFloat(result.toFixed(10)));
+        const resultStr = Number.isFinite(result) ? String(parseFloat(result.toFixed(10))) : "错误";
         return {
           displayValue: resultStr,
           previousValue: resultStr,
@@ -97,7 +97,7 @@ export default function Calculator() {
       if (!s.operator || s.previousValue === null) return s;
       const current = parseFloat(s.displayValue);
       const result = calculate(parseFloat(s.previousValue), s.operator, current);
-      const resultStr = String(parseFloat(result.toFixed(10)));
+      const resultStr = Number.isFinite(result) ? String(parseFloat(result.toFixed(10))) : "错误";
       return {
         displayValue: resultStr,
         previousValue: null,
@@ -109,10 +109,10 @@ export default function Calculator() {
 
   const btnClass = (variant: "default" | "op" | "special" = "default") => {
     const base =
-      "w-16 h-16 rounded-2xl text-lg font-medium flex items-center justify-center transition-all active:scale-95";
+      "w-full h-16 rounded-lg text-lg font-medium flex items-center justify-center transition-all active:scale-95";
     switch (variant) {
       case "op":
-        return `${base} bg-indigo-500 text-white hover:bg-indigo-600`;
+        return `${base} bg-blue-500 text-white hover:bg-blue-600`;
       case "special":
         return `${base} bg-slate-200 text-slate-800 hover:bg-slate-300`;
       default:
@@ -126,10 +126,8 @@ export default function Calculator() {
       : "";
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-xs mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">计算器</h2>
-
-      <div className="bg-slate-900 text-white text-right p-6 rounded-2xl mb-4">
+    <div className="tool-surface mx-auto" style={{ maxWidth: 320 }}>
+      <div className="bg-slate-900 text-white text-right p-6 rounded-lg mb-4">
         <div className="text-sm text-slate-400 font-mono h-5 mb-1 truncate">
           {displayExpr}
         </div>

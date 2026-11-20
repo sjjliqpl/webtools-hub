@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState } from 'react';
 
 type FlexDirection = 'row' | 'row-reverse' | 'column' | 'column-reverse';
@@ -14,13 +15,13 @@ interface ItemProps {
 }
 
 const ITEM_COLORS = [
-  'bg-indigo-200 text-indigo-700',
+  'bg-blue-200 text-blue-700',
   'bg-pink-200 text-pink-700',
   'bg-amber-200 text-amber-700',
   'bg-emerald-200 text-emerald-700',
 ];
 
-const SELECT_CLS = 'w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500';
+const SELECT_CLS = 'w-full rounded-lg border border-slate-200 px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500';
 const LABEL_CLS = 'text-xs font-medium text-slate-500 mb-1 block';
 
 export default function FlexboxPlayground() {
@@ -54,16 +55,14 @@ export default function FlexboxPlayground() {
 
   const fullCSS = containerCSS + selectedItemCSS;
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(fullCSS);
+  const handleCopy = async () => {
+    if (!await copyText(fullCSS)) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-6">
-      <h2 className="text-lg font-semibold text-slate-800">Flexbox Playground</h2>
-
+    <div className="tool-surface space-y-6">
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Controls */}
         <div className="lg:w-72 space-y-4 shrink-0">
@@ -99,7 +98,7 @@ export default function FlexboxPlayground() {
 
           <div>
             <label className={LABEL_CLS}>gap: {gap}px</label>
-            <input type="range" min={0} max={40} value={gap} onChange={e => setGap(Number(e.target.value))} className="w-full accent-indigo-600" />
+            <input type="range" min={0} max={40} value={gap} onChange={e => setGap(Number(e.target.value))} className="w-full accent-blue-600" />
           </div>
 
           {selected !== null && (
@@ -135,14 +134,14 @@ export default function FlexboxPlayground() {
         <div className="flex-1 space-y-4">
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Preview <span className="normal-case font-normal">(click a box to select)</span></p>
           <div
-            className="border-2 border-dashed border-indigo-300 rounded-xl p-4 min-h-[160px]"
+            className="border-2 border-dashed border-blue-300 rounded-md p-4 min-h-[160px]"
             style={{ display: 'flex', flexDirection: direction, justifyContent: justify, alignItems, flexWrap: wrap, gap }}
           >
             {items.map((item, i) => (
               <div
                 key={i}
                 onClick={() => setSelected(selected === i ? null : i)}
-                className={`rounded-lg px-5 py-4 font-bold text-sm cursor-pointer transition-all select-none ${ITEM_COLORS[i]} ${selected === i ? 'ring-2 ring-offset-1 ring-indigo-500' : ''}`}
+                className={`rounded-lg px-5 py-4 font-bold text-sm cursor-pointer transition-all select-none ${ITEM_COLORS[i]} ${selected === i ? 'ring-2 ring-offset-1 ring-blue-500' : ''}`}
                 style={{
                   flexGrow: item.flexGrow,
                   flexShrink: item.flexShrink,
@@ -158,12 +157,12 @@ export default function FlexboxPlayground() {
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">Generated CSS</span>
-            <button onClick={handleCopy} className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors">
-              {copied ? 'Copied!' : 'Copy'}
+            <span className="text-xs font-medium text-slate-500">生成的 CSS</span>
+            <button onClick={handleCopy} className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
+              {copied ? '已复制' : '复制'}
             </button>
           </div>
-          <pre className="bg-slate-900 text-green-400 rounded-xl p-4 text-sm font-mono break-all whitespace-pre-wrap">{fullCSS}</pre>
+          <pre className="bg-slate-900 text-green-400 rounded-md p-4 text-sm font-mono break-all whitespace-pre-wrap">{fullCSS}</pre>
         </div>
       </div>
     </div>

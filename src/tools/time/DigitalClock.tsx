@@ -26,13 +26,13 @@ export default function DigitalClock() {
   const weekday = WEEKDAYS[now.getDay()];
 
   return (
-    <div className="bg-slate-900 text-white rounded-2xl p-8 flex flex-col items-center gap-4">
+    <div className="bg-slate-900 text-white rounded-lg p-8 flex flex-col items-center gap-4">
       <div className="flex items-baseline gap-2">
         <span className="text-5xl font-mono font-bold tracking-wider">
           {pad(displayHour)}:{pad(minutes)}:{pad(seconds)}
         </span>
         {!is24h && (
-          <span className="text-xl font-mono text-indigo-400">{ampm}</span>
+          <span className="text-xl font-mono text-blue-400">{ampm}</span>
         )}
       </div>
 
@@ -44,7 +44,7 @@ export default function DigitalClock() {
 
       <button
         onClick={() => setIs24h((v) => !v)}
-        className="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
       >
         {is24h ? "切换 12 小时制" : "切换 24 小时制"}
       </button>

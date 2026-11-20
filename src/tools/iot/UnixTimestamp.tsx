@@ -56,8 +56,7 @@ export default function UnixTimestamp() {
   return (
     <div className="space-y-4 max-w-2xl mx-auto">
       {/* Timestamp → Date */}
-      <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-800 mb-1">Unix 时间戳转换</h2>
+      <div className="tool-surface">
         <p className="text-sm text-slate-500 mb-4">Unix 时间戳与本地时间互转，支持秒 / 毫秒自动识别</p>
 
         <div className="mb-4">
@@ -68,11 +67,11 @@ export default function UnixTimestamp() {
               value={tsInput}
               onChange={e => setTsInput(e.target.value)}
               placeholder="输入 Unix 时间戳（秒或毫秒）"
-              className="flex-1 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+              className="flex-1 rounded-md border border-slate-200 px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30"
             />
             <button
               onClick={now}
-              className="px-3 py-2 rounded-xl bg-slate-100 text-slate-600 text-xs hover:bg-teal-50 hover:text-teal-700 transition-colors"
+              className="px-3 py-2 rounded-md bg-slate-100 text-slate-600 text-xs hover:bg-teal-50 hover:text-teal-700 transition-colors"
             >
               现在
             </button>
@@ -92,24 +91,24 @@ export default function UnixTimestamp() {
 
           {tsResult && (
             <div className="mt-3 space-y-2">
-              <div className="bg-teal-50 rounded-xl px-4 py-3">
+              <div className="bg-teal-50 rounded-md px-4 py-3">
                 <p className="text-xs text-teal-600 mb-0.5">本地时间</p>
                 <p className="text-base font-mono font-semibold text-teal-800">{formatDateTime(tsResult.d)}</p>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <div className="bg-slate-50 rounded-xl px-4 py-2.5">
+                <div className="bg-slate-50 rounded-md px-4 py-2.5">
                   <p className="text-xs text-slate-500 mb-0.5">UTC 时间</p>
                   <p className="text-sm font-mono text-slate-700">{formatDateTimeUTC(tsResult.d)}</p>
                 </div>
-                <div className="bg-slate-50 rounded-xl px-4 py-2.5">
+                <div className="bg-slate-50 rounded-md px-4 py-2.5">
                   <p className="text-xs text-slate-500 mb-0.5">ISO 8601</p>
                   <p className="text-sm font-mono text-slate-700 truncate">{tsResult.d.toISOString()}</p>
                 </div>
-                <div className="bg-slate-50 rounded-xl px-4 py-2.5">
+                <div className="bg-slate-50 rounded-md px-4 py-2.5">
                   <p className="text-xs text-slate-500 mb-0.5">星期</p>
                   <p className="text-sm font-mono text-slate-700">{['周日','周一','周二','周三','周四','周五','周六'][tsResult.d.getDay()]}</p>
                 </div>
-                <div className="bg-slate-50 rounded-xl px-4 py-2.5">
+                <div className="bg-slate-50 rounded-md px-4 py-2.5">
                   <p className="text-xs text-slate-500 mb-0.5">输入识别为</p>
                   <p className="text-sm font-mono text-slate-700">{tsResult.isMs ? '毫秒级时间戳' : '秒级时间戳'}</p>
                 </div>
@@ -124,16 +123,16 @@ export default function UnixTimestamp() {
             type="datetime-local"
             value={dtInput}
             onChange={e => setDtInput(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+            className="w-full rounded-md border border-slate-200 px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/30"
           />
 
           {dtResult && (
             <div className="mt-3 grid grid-cols-2 gap-2">
-              <div className="bg-teal-50 rounded-xl px-4 py-3">
+              <div className="bg-teal-50 rounded-md px-4 py-3">
                 <p className="text-xs text-teal-600 mb-0.5">Unix 时间戳（秒）</p>
                 <p className="text-base font-mono font-bold text-teal-800">{dtResult.sec}</p>
               </div>
-              <div className="bg-slate-50 rounded-xl px-4 py-3">
+              <div className="bg-slate-50 rounded-md px-4 py-3">
                 <p className="text-xs text-slate-500 mb-0.5">Unix 时间戳（毫秒）</p>
                 <p className="text-base font-mono font-semibold text-slate-700">{dtResult.ms}</p>
               </div>
@@ -142,7 +141,7 @@ export default function UnixTimestamp() {
         </div>
       </div>
 
-      <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+      <div className="bg-slate-50 rounded-lg p-4 border border-slate-100">
         <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">关于 Unix 时间戳</p>
         <p className="text-xs text-slate-500">Unix 时间戳是从 1970-01-01 00:00:00 UTC（Unix 纪元）起经过的秒数，广泛用于 IoT 设备时间同步、数据记录和 NTP 协议。</p>
       </div>

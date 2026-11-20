@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState, useMemo } from "react";
 
 interface FilterResult {
@@ -59,16 +60,14 @@ export default function WordFilter() {
     setFiltered(filterText(input, wordList, caseInsensitive));
   };
 
-  const copyResult = () => {
+  const copyResult = async () => {
     if (!filtered) return;
     const text = filtered.segments.map((s) => s.text).join("");
-    navigator.clipboard.writeText(text);
+    if (!await copyText(text)) return;
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-slate-800 mb-4">敏感词过滤</h2>
-
+    <div className="tool-surface max-w-lg mx-auto">
       <div className="mb-3">
         <label className="block text-xs text-slate-500 mb-1">输入文本</label>
         <textarea
@@ -76,7 +75,7 @@ export default function WordFilter() {
           onChange={(e) => setInput(e.target.value)}
           rows={4}
           placeholder="请输入需要过滤的文本..."
-          className="w-full px-4 py-2 border border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full px-4 py-2 border border-slate-200 rounded-md text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
@@ -89,7 +88,7 @@ export default function WordFilter() {
           value={keywords}
           onChange={(e) => setKeywords(e.target.value)}
           placeholder="例如: 词1,词2,词3"
-          className="w-full px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full px-4 py-2 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
@@ -99,7 +98,7 @@ export default function WordFilter() {
             type="checkbox"
             checked={caseInsensitive}
             onChange={(e) => setCaseInsensitive(e.target.checked)}
-            className="rounded accent-indigo-600"
+            className="rounded accent-blue-600"
           />
           忽略大小写
         </label>
@@ -107,21 +106,21 @@ export default function WordFilter() {
         <button
           onClick={handleFilter}
           disabled={!input.trim() || wordList.length === 0}
-          className="ml-auto px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="ml-auto px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           过滤
         </button>
       </div>
 
       {filtered && (
-        <div className="border border-slate-200 rounded-xl p-4">
+        <div className="border border-slate-200 rounded-md p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs text-slate-500">
-              共替换 <strong className="text-indigo-600">{filtered.count}</strong> 处
+              共替换 <strong className="text-blue-600">{filtered.count}</strong> 处
             </span>
             <button
               onClick={copyResult}
-              className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+              className="text-xs text-blue-600 hover:text-blue-700 font-medium"
             >
               复制结果
             </button>

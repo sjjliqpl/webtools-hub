@@ -1,3 +1,4 @@
+import { copyText } from '../../lib/clipboard';
 import { useState } from 'react';
 
 interface Stop {
@@ -43,16 +44,14 @@ export default function GradientGenerator() {
     setStops(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(css);
+  const handleCopy = async () => {
+    if (!await copyText(css)) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-6">
-      <h2 className="text-lg font-semibold text-slate-800">CSS Gradient Generator</h2>
-
+    <div className="tool-surface space-y-6">
       {/* Type tabs */}
       <div className="flex gap-6 border-b border-slate-200">
         {(['linear', 'radial'] as const).map(t => (
@@ -61,7 +60,7 @@ export default function GradientGenerator() {
             onClick={() => setType(t)}
             className={
               type === t
-                ? 'border-b-2 border-indigo-600 text-indigo-600 font-medium pb-2 capitalize'
+                ? 'border-b-2 border-blue-600 text-blue-600 font-medium pb-2 capitalize'
                 : 'pb-2 text-slate-500 capitalize hover:text-slate-700'
             }
           >
@@ -82,7 +81,7 @@ export default function GradientGenerator() {
             max={360}
             value={angle}
             onChange={e => setAngle(Number(e.target.value))}
-            className="w-full accent-indigo-600"
+            className="w-full accent-blue-600"
           />
         </div>
       )}
@@ -93,7 +92,7 @@ export default function GradientGenerator() {
           <span className="text-xs font-medium text-slate-500">Color Stops</span>
           <button
             onClick={addStop}
-            className="text-xs px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors"
+            className="text-xs px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
           >
             + Add Stop
           </button>
@@ -114,7 +113,7 @@ export default function GradientGenerator() {
                 max={100}
                 value={stop.position}
                 onChange={e => updateStop(i, 'position', Number(e.target.value))}
-                className="w-full accent-indigo-600"
+                className="w-full accent-blue-600"
               />
             </div>
             <button
@@ -130,19 +129,19 @@ export default function GradientGenerator() {
 
       {/* Preview */}
       <div
-        className="rounded-xl w-full"
+        className="rounded-md w-full"
         style={{ minHeight: 200, background: gradientValue }}
       />
 
       {/* Generated CSS */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-medium text-slate-500">Generated CSS</span>
-          <button onClick={handleCopy} className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors">
-            {copied ? 'Copied!' : 'Copy'}
+          <span className="text-xs font-medium text-slate-500">生成的 CSS</span>
+          <button onClick={handleCopy} className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
+            {copied ? '已复制' : '复制'}
           </button>
         </div>
-        <pre className="bg-slate-900 text-green-400 rounded-xl p-4 text-sm font-mono break-all whitespace-pre-wrap">{css}</pre>
+        <pre className="bg-slate-900 text-green-400 rounded-md p-4 text-sm font-mono break-all whitespace-pre-wrap">{css}</pre>
       </div>
     </div>
   );
